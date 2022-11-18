@@ -1,4 +1,4 @@
-// Evaluar expresiones simples usando los record definidos en SealedRecord.
+// Evaluar expresiones simples.
 // Se permite *, /, +, - con este nivel de precedencia.
 // Las expresiones entre paréntesis se evalúan primero.
 //
@@ -10,19 +10,24 @@
 
 public final class Evaluar {
     /**
+     * Si se deben mostrar los resultados parciales de la evaluación de la expresión.
+     */
+    public static boolean mostrarParciales = false;
+
+    /**
      * Evalúa una expresión. Punto de entrada para evaluar expresiones.
      *
      * @param expresion La expresión a evaluar.
      * @return El valor entero de la expresión evaluada.
      */
-    public static int evalua(String expresion) {
+    public static double evalua(String expresion) {
         if (expresion == null || expresion.trim().equals(""))
             return -1;
 
         // Quitar todos los caracteres en blanco.
         expresion = expresion.replace(" ", "");
 
-        int resultado;
+        double resultado;
 
         // Primero se evalúan todas las expresiones entre paréntesis.
         var res = evaluaParentesis(expresion);
@@ -32,7 +37,7 @@ public final class Evaluar {
             resultado = evaluar(res);
         } else {
             // Si no hay operadores, es que es el resultado.
-            resultado = Integer.parseInt(res);
+            resultado = Double.parseDouble(res);
         }
 
         return resultado;
@@ -64,7 +69,7 @@ public final class Evaluar {
                     // En .NET es desde inicio con la cantidad de caracteres del segundo parámetro.
                     var exp = expresion.substring(ini + 1, fin);
                     // Evaluar el resultado de la expresión.
-                    int res = evaluar(exp);
+                    double res = evaluar(exp);
                     // Asignar el resultado a la expresión.
                     //  Si hay varias expresiones (entre paréntesis) como la evaluada,
                     //      se reemplazarán por el resultado.
@@ -96,7 +101,6 @@ public final class Evaluar {
             } else {
                 // Quitar los que hubiera (si no están emparejados).
                 if (hayApertura || expresion.indexOf(')') > -1){
-                    //System.err.println("Los paréntesis no están emparejados:\n    " + expresion);
                     expresion = expresion.replace("(", "").replace(")", "");
                 }
                 hay = false;
@@ -115,7 +119,7 @@ public final class Evaluar {
      * @param expresion La expresión a evaluar.
      * @return Un valor entero con el resultado de la expresión evaluada.
      */
-    private static int evaluar(String expresion) { //throws Exception {
+    private static double evaluar(String expresion) { //throws Exception {
         // Si la expresión es nula o una cadena vacía, se devuelve cero.
         if (expresion == null || expresion.trim().equals(""))
             return 0;
@@ -126,7 +130,7 @@ public final class Evaluar {
         // Evaluar la expresión indicada.
 
         String op1, op2;
-        int resultado = 0;
+        double resultado = 0;
         TuplePair<Character, Integer> donde;
 
         do {
@@ -137,34 +141,43 @@ public final class Evaluar {
             }
 
             // Si la posición es cero es que delante no hay nada.
+            // O es un número negativo. (18/nov/22 16.27)
             if (donde.posicion == 0) {
+                if (expresion.startsWith("-") || expresion.startsWith("+")) {
+                    return Double.parseDouble(expresion);
+                }
                 System.err.println("La posición del operador es cero.");
                 // No lanzar una excepción, devolver -1.
                 return -1;
             }
 
-            ConstantExpr res1, res2;
+            double res1, res2;
 
             // Asignar todos los caracteres hasta el signo al primer operador.
             op1 = expresion.substring(0, donde.posicion).trim();
             op1 = buscarUnNumero(op1, true);
-            res1 = new ConstantExpr(Integer.parseInt(op1));
+            res1 = Double.parseDouble(op1);
 
             // op2 tendrá el resto de la expresión.
             op2 = expresion.substring(donde.posicion + 1).trim();
             // Buscar el número hasta el siguiente operador.
             op2 = buscarUnNumero(op2, false);
-            res2 = new ConstantExpr(Integer.parseInt(op2));
+            res2 = Double.parseDouble(op2);
 
             resultado = switch (donde.operador) {
-                case '+' -> new PlusExpr(res1, res2).eval();
-                case '-' -> new MinusExpr(res1, res2).eval();
-                case '*' -> new TimesExpr(res1, res2).eval();
-                case '/' -> new DivideExpr(res1, res2).eval();
+                case '+' -> res1 + res2;
+                case '-' -> res1 - res2;
+                case '*' -> res1 * res2;
+                case '/' -> res1 / res2;
                 default -> 0;
             };
             var laOperacion = op1 + donde.operador + op2;
             var elResultado = String.valueOf(resultado);
+
+            // Si se deben mostrar las operaciones parciales. (18/nov/22 15.08)
+            if (mostrarParciales) {
+                System.err.printf("\t %s = %,.2f\n", laOperacion, resultado);
+            }
 
             // Cambiar por el resultado esta expresión. (18/nov/22 00.20)
 
