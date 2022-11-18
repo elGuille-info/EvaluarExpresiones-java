@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="881e4cde-0769-4cb5-bbb4-319ce930dd2e" name="Changes" comment="Añado gitignore para quitar el directorio out">
+    <list default="true" id="881e4cde-0769-4cb5-bbb4-319ce930dd2e" name="Changes" comment="Evalúa usando double en lugar de records.">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Evaluar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Evaluar.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Expresiones.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -70,7 +70,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668766599954</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Evalúa usando double en lugar de records.">
+      <created>1668785441771</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1668785441771</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -89,16 +96,21 @@
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
     <MESSAGE value="Añado gitignore para quitar el directorio out" />
-    <option name="LAST_COMMIT_MESSAGE" value="Añado gitignore para quitar el directorio out" />
+    <MESSAGE value="Evalúa usando double en lugar de records." />
+    <option name="LAST_COMMIT_MESSAGE" value="Evalúa usando double en lugar de records." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Evaluar.java</url>
-          <line>148</line>
-          <option name="timeStamp" value="10" />
+          <line>140</line>
+          <option name="timeStamp" value="37" />
         </line-breakpoint>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.NumberFormatException" package="java.lang" />
+          <option name="timeStamp" value="41" />
+        </breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
