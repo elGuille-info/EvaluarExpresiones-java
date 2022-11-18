@@ -19,13 +19,28 @@ public class Main {
 
         Evaluar.mostrarParciales = true;
 
+        final String black = "\033[30m";
+        final String red = "\033[31m";
+        final String redBack = "\033[41m";
+        final String green = "\033[32m";
+        final String greenBack = "\033[42m";
+        final String yellow = "\033[33m";
+        final String yellowBack = "\u001B[43m";
+        final String blue = "\033[34m";
+        final String purple = "\033[35m";
+        final String cyan = "\033[36m";
+        final String white = "\033[37m";
+        final String reset = "\u001B[0m";
+
         String res;
 
         while (true) {
 
             //ClearConsole();
+            System.out.print(yellow);
             System.out.println("Evaluar expresiones simples de números con decimales.");
-            System.out.println();
+            System.out.print(reset);
+            System.out.println(green);
             System.out.println("Opciones:");
             System.out.print(" Mostrar las operaciones parciales:");
             System.out.println("  1: Sí, 2: No");
@@ -33,7 +48,7 @@ public class Main {
             System.out.println(" 3: Sí, 4: No");
             System.out.print(" Indicar una expresión a evaluar:");
             System.out.println("    5: Sí, 6: No (se usa una de prueba)");
-            //System.out.println();
+            System.out.print(reset);
             System.out.print("Indica las opciones a usar, 0=salir (ej: 146) [145]: ");
 
             //System.out.print("Mostrar las operaciones parciales? ([S|s] = sí, otro = no) ");
