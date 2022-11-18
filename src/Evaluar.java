@@ -41,7 +41,7 @@ public final class Evaluar {
         double resultado;
 
         // Primero se evalúan todas las expresiones entre paréntesis.
-        var res = evaluateParenthesis(expression);
+        var res = evaluarParentesis(expression);
 
         // Si hay algún operador, evaluar la expresión.
         if (hayOperador(res)) {
@@ -98,7 +98,9 @@ public final class Evaluar {
             op1 = expression.substring(0, donde.positionEsta).trim();
             // La variable op1 puede tener la expresión 16.5--20.0 y al convertirla a doble falla.
             // Ahora en buscarUnNumero se comprueba si la expresión tiene un número negativo.
-            op1 = buscarUnNumero(op1, true);
+            var op11 = buscarUnNumero(op1, true);
+            op1 = op11;
+            //op1 = buscarUnNumero(op1, true);
             res1 = Double.parseDouble(op1);
 
             // op2 tendrá el resto de la expresión.
@@ -160,7 +162,7 @@ public final class Evaluar {
      * @param expression Expresión a evaluar (puede tener o no paréntesis).
      * @return La cadena sin los paréntesis y con lo que haya entre paréntesis ya evaluado.
      */
-    private static String evaluateParenthesis(String expression) {
+    private static String evaluarParentesis(String expression) {
         boolean hay;
         do {
             // Posición del paréntesis de apertura.
@@ -316,7 +318,10 @@ public final class Evaluar {
         var unOp = hayUnOperador(expression);
         if (unOp.positionEsta) {
             if (unOp.operador == '-') {
-                return expression;
+                // Solo si empieza con ese operador.
+                if (expression.charAt(0) == unOp.operador) {
+                    return expression;
+                }
             }
         }
         // Si la expresión empieza por un operador, quitarlo. (18/nov/22 16.59)

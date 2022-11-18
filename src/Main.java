@@ -72,7 +72,15 @@ public class Main {
             Evaluar.mostrarParciales = res.contains("1");
             mostrarEjemplos = res.contains("3");
 
-            expression = "1.5**3+12-(15+5)*2 + 10%3";
+            //expression = "1.5**3+12-(15+5)*2 + 10%3";
+            // Ya que + se evlúa antes que -, esto se evalúa como:
+            //  2*7=14, 15+14=29, 99-29 = 70
+            // Tendría que ser como si se pusiera así: (99-15)+2*7
+            //  2*7=14, 99-15=84, 84+14=98
+            expression = "99-15+2*7";
+            var prueba1 = 99-15+2*7;
+            System.out.printf("%s = %s\n",expression, prueba1);
+            //expression = "(99-15)+2*7";
             if (res.contains("5")) {
                 System.out.printf("Escribe una expresión a evaluar [%s] ", expression);
                 var res2 = in.readLine();
@@ -157,7 +165,7 @@ public class Main {
                 Evaluar.mostrarParciales = mostrarParcialesAnt;
             }
 
-            System.out.println("\nPulsa INTRO para ir al menú (0 para terminar)");
+            System.out.print("\nPulsa INTRO para ir al menú (0 para terminar) ");
             res = in.readLine();
             System.out.println();
             if (res.equals("0")) {
