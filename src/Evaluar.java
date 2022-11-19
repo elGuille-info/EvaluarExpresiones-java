@@ -1,5 +1,5 @@
 // Evaluar expresiones simples.
-// Se permite *, /, +, - con este nivel de precedencia.
+// Se permite *, /, %, +, - con este nivel de precedencia.
 // Las expresiones entre paréntesis se evalúan primero.
 //
 //  op1 + op2 * op3 se evalúa como op1 + (op2*op3)
@@ -8,6 +8,12 @@
 
 //package com.example.evaluar;
 
+/**
+ * Clase para evaluar expresiones simples utilizando valores dobles.
+ *
+ * @author Guillermo Som (Guille), 16/nov/2022
+ * @version 1.1.0.0
+ */
 public final class Evaluar {
     public static void main (String[] args) {
         String hola = "Hola";

@@ -1,5 +1,8 @@
 /**
  * Extensiones para las cadenas. (19/nov/22 04.13)
+ *
+ * @author Guillermo Som (Guille)
+ * @version 1.0.0.0
  */
 public class StringExtend {
 

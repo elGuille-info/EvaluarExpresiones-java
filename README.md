@@ -5,7 +5,7 @@ Ejemplo de evaluar expresiones en Java
 
 > **Nota:**
 >
-> Esta versión utiliza el tipo **double** para realizar las operaciones, por tanto se pueden usar números con decimales (sin notación científica).
+> Esta versión utiliza el tipo **double** para realizar las operaciones, por tanto, se pueden usar números con decimales (sin notación científica).
 >
 > Si quieres ver la versión que usa records para hacer las operaciones sigue este enlace: [EvaluarExpresiones-records-java](https://github.com/elGuille-info/EvaluarExpresiones-records-java)
 >

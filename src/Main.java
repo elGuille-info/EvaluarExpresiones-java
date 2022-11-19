@@ -19,28 +19,33 @@ public class Main {
 
         Evaluar.mostrarParciales = true;
 
-        final String black = "\033[30m";
-        final String red = "\033[31m";
-        final String redBack = "\033[41m";
-        final String green = "\033[32m";
-        final String greenBack = "\033[42m";
-        final String yellow = "\033[33m";
-        final String yellowBack = "\u001B[43m";
-        final String blue = "\033[34m";
-        final String purple = "\033[35m";
-        final String cyan = "\033[36m";
-        final String white = "\033[37m";
-        final String reset = "\u001B[0m";
+        enum ConsoleColor {
+            reset ("\u001B[0m"),
+            black ("\033[30m"),
+            red ("\033[31m"),
+            green ("\033[32m"),
+            yellow ("\033[33m"),
+            blue ("\033[34m"),
+            purple ("\033[35m"),
+            cyan ("\033[36m"),
+            white ("\033[37m"),
+            redBack ("\033[41m"),
+            greenBack ("\033[42m"),
+            yellowBack ("\u001B[43m");
+            ConsoleColor(String color) {
+                this.elColor = color;
+            }
+            private final String elColor;
+            }
 
         String res;
 
         while (true) {
 
-            //ClearConsole();
-            System.out.print(yellow);
+            System.out.print(ConsoleColor.yellow.elColor);
             System.out.println("Evaluar expresiones simples de números con decimales.");
-            System.out.print(reset);
-            System.out.println(green);
+            System.out.print(ConsoleColor.reset.elColor);
+            System.out.println(ConsoleColor.green.elColor);
             System.out.println("Opciones:");
             System.out.print(" Mostrar las operaciones parciales:");
             System.out.println("  1: Sí, 2: No");
@@ -48,7 +53,7 @@ public class Main {
             System.out.println(" 3: Sí, 4: No");
             System.out.print(" Indicar una expresión a evaluar:");
             System.out.println("    5: Sí, 6: No (se usa una de prueba)");
-            System.out.print(reset);
+            System.out.print(ConsoleColor.reset.elColor);
             System.out.print("Indica las opciones a usar, 0=salir (ej: 146) [145]: ");
 
             //System.out.print("Mostrar las operaciones parciales? ([S|s] = sí, otro = no) ");
@@ -196,42 +201,5 @@ public class Main {
         long elapsedTime = System.nanoTime() - startTime;
         //long elapsedTime = System.currentTimeMillis() - iniTime;
         System.out.printf("  Tiempo empleado: %,.2f ns/1.000\n", (elapsedTime / 1000.0));
-    }
-
-    /**
-     * Limpiar la consola (pantalla).
-     */
-    private static void ClearConsole() {
-        // En la pantalla mostrada en el IDE, nada de esto no funciona.
-
-//        for (int i = 0; i < 30; i++) {
-//            System.out.println();
-//        }
-//        Robot limpiar = new Robot();
-//        limpiar.keyPress(KeyEvent.VK_CONTROL);
-//        limpiar.keyPress(KeyEvent.VK_L);
-//        limpiar.keyRelease(KeyEvent.VK_CONTROL);
-//        limpiar.keyRelease(KeyEvent.VK_L);
-        // Esto no funciona.
-//        System.out.print("\033[H\033[2J");
-//        System.out.flush();
-
-//        try {
-//            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-//        } catch (Exception e) {
-//            /*No hacer nada*/
-//        }
-
-        try {
-            String operatingSystem = System.getProperty("os.name"); //Check the current operating system
-
-            if (operatingSystem.contains("Windows")) {
-                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            } else {
-                new ProcessBuilder("clear").inheritIO().start().waitFor();
-            }
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
     }
 }
