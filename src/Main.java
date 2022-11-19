@@ -73,12 +73,16 @@ public class Main {
             mostrarEjemplos = res.contains("3");
 
             //expression = "1.5**3+12-(15+5)*2 + 10%3";
-            // Ya que + se evlúa antes que -, esto se evalúa como:
+            // Ya que + se evalúa antes que -, esto se evalúa como:
             //  2*7=14, 15+14=29, 99-29 = 70
             // Tendría que ser como si se pusiera así: (99-15)+2*7
             //  2*7=14, 99-15=84, 84+14=98
+            double prueba1;
+            expression = "1+2*3+6";
+            prueba1 = 1+2*3+6;
+            System.out.printf("%s = %s\n",expression, prueba1);
             expression = "99-15+2*7";
-            var prueba1 = 99-15+2*7;
+            prueba1 = 99-15+2*7;
             System.out.printf("%s = %s\n",expression, prueba1);
             //expression = "(99-15)+2*7";
             if (res.contains("5")) {
