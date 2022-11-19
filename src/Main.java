@@ -73,10 +73,13 @@ public class Main {
             mostrarEjemplos = res.contains("3");
 
             //expression = "1.5**3+12-(15+5)*2 + 10%3";
+            //expression = "99-15+2*7";
             // Ya que + se evalúa antes que -, esto se evalúa como:
             //  2*7=14, 15+14=29, 99-29 = 70
             // Tendría que ser como si se pusiera así: (99-15)+2*7
             //  2*7=14, 99-15=84, 84+14=98
+            // Si es el mismo nivel de precedencia, se evaluaría:
+            // 99-15+ (2*7) = 99-15=84 + 2*7=14 -> 84+14= 98
             double prueba1;
             expression = "1+2*3+6";
             prueba1 = 1+2*3+6;

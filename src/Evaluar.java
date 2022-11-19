@@ -8,22 +8,41 @@
 
 //package com.example.evaluar;
 
+import java.util.ArrayList;
+
 public final class Evaluar {
+    public static void main (String[] args) {
+        String hola = "Hola";
+        var anyOf = "aeiou";
+        var pos = indexOfAny(hola, anyOf.toCharArray());
+        String esta = pos.position > -1 ? "'" + pos.operador + "' está en la posición " + pos.position : "no está ninguno";
+        System.out.printf("En '%s' de los caracteres de %s %s\n", hola, anyOf, esta);
+        System.out.println();
+
+        pos = firstIndexOfAny(hola, anyOf.toCharArray());
+        esta = pos == null ? "no hay ninguno" :  "'" + pos.operador + "' está en la posición " + pos.position;
+        System.out.printf("En '%s' de los caracteres de %s, %s\n", hola, anyOf, esta);
+    }
+
     /**
      * Si se deben mostrar los resultados parciales de la evaluación de la expresión.
      */
     public static boolean mostrarParciales = false;
 
+    private static final String operadoresNivel1 = "*/%";
+    private static final String operadoresNivel2 = "+-";
+
     /**
      * Los operadores en el orden de precedencia.
      * Sin incluir los paréntesis que se procesan por separado.
      */
-    static final String losOperadores = "*/%+-";
+    private static final String losOperadores = operadoresNivel1 + operadoresNivel2;
+    //static final String losOperadores = "*/%+-";
 
     /**
      * Array de tipo char con los operadores en el orden de precedencia.
      */
-    static final char[] operadores = losOperadores.toCharArray();
+    private static final char[] operadores = losOperadores.toCharArray();
 
     /**
      * Evalúa una expresión. Punto de entrada para evaluar expresiones.
@@ -77,13 +96,13 @@ public final class Evaluar {
         do {
             // Buscar la operación a realizar.
             donde = siguienteOperadorConPrecedencia(expression);
-            if (donde.positionEsta == -1) {
+            if (donde == null) {
                 break;
             }
 
             // Si la posición es cero es que delante no hay nada.
             // O es un número negativo. (18/nov/22 16.27)
-            if (donde.positionEsta == 0) {
+            if (donde.position == 0) {
                 if (expression.startsWith("-") || expression.startsWith("+")) {
                     return Double.parseDouble(expression);
                 }
@@ -95,7 +114,7 @@ public final class Evaluar {
             double res1, res2;
 
             // Asignar todos los caracteres hasta el signo al primer operador.
-            op1 = expression.substring(0, donde.positionEsta).trim();
+            op1 = expression.substring(0, donde.position).trim();
             // La variable op1 puede tener la expresión 16.5--20.0 y al convertirla a doble falla.
             // Ahora en buscarUnNumero se comprueba si la expresión tiene un número negativo.
             var op11 = buscarUnNumero(op1, true);
@@ -104,7 +123,7 @@ public final class Evaluar {
             res1 = Double.parseDouble(op1);
 
             // op2 tendrá el resto de la expresión.
-            op2 = expression.substring(donde.positionEsta + 1).trim();
+            op2 = expression.substring(donde.position + 1).trim();
             // Buscar el número hasta el siguiente operador.
             op2 = buscarUnNumero(op2, false);
             res2 = Double.parseDouble(op2);
@@ -232,7 +251,7 @@ public final class Evaluar {
      * @param expression La cadena a comprobar.
      * @return True si contiene algún operador, false en caso contrario.
      */
-    static boolean hayOperador(String expression) {
+    private static boolean hayOperador(String expression) {
         for (char c : operadores) {
             if (expression.indexOf(c) > -1) {
                 return true;
@@ -242,22 +261,22 @@ public final class Evaluar {
     }
 
     /**
-     * Comprueba si hay un solo operador, si lo hay devuelve una tuple con el carácter y true.
+     * Comprueba si hay un solo operador, si lo hay devuelve un tuple con el carácter y la posición en la cadena.
      * @param expression La expresión a evaluar.
-     * @return Si solo hay un operador, devuelve un tuple con el operador y true,
-     *         en otro caso devuelve '\u0000' y false.
+     * @return Si solo hay un operador, devuelve un tuple con el operador y la posición,
+     *         en otro caso devuelve '\u0000' y -1.
      */
-    static TuplePair<Character, Boolean> hayUnOperador(String expression) {
+    private static TuplePair<Character, Integer> hayUnOperador(String expression) {
         int cuantos = 0;
         char elOperador = '\u0000';
-        TuplePair<Character, Boolean> res; // = new TuplePair<>('\u0000', false);
+        TuplePair<Character, Integer> res = new TuplePair<>('\u0000', -1);
         for(char op : operadores) {
             int pos = expression.indexOf(op);
             if (pos > -1) {
                 cuantos++;
                 // Asignar solo el primero.
                 if (cuantos == 1) {
-                    //res = new TuplePair<>(op,  true);
+                    res = new TuplePair<>(op,  pos);
                     elOperador = op;
                     // Puede que este mismo operador está más de una vez.
                     if (pos < expression.length()) {
@@ -269,31 +288,41 @@ public final class Evaluar {
                 }
             }
         }
-        if (cuantos == 1) {
-            res = new TuplePair<>(elOperador, true);
-        }
-        else {
-            res = new TuplePair<>('\u0000', false);
+        if (cuantos != 1) {
+//            //res = new TuplePair<>(elOperador, true);
+//        }
+//        else {
+            res = new TuplePair<>('\u0000', -1);
         }
 
         return res;
     }
 
     /**
-     * Busca el siguiente signo de operación (teniendo en cuenta la precedencia: * / + -).
+     * Busca el siguiente signo de operación (teniendo en cuenta la precedencia: * / % + -).
      * @param expression La expresión a evaluar.
-     * @return Una tuple con el operador hallado y la posición en la expresión.
-     *         Si no se ha hallado, la tuple contendrá '\u0000' como el operador y -1 como la posición.
+     * @return Una tuple con el operador hallado y la posición en la expresión o null si no se ha hallado.
      */
-    static TuplePair<Character, Integer> siguienteOperadorConPrecedencia(String expression) {
-        for (char op : operadores) {
-            int pos = expression.indexOf(op);
-            if (pos > -1) {
-                return new TuplePair<>(op, pos);
-            }
+    private static TuplePair<Character, Integer> siguienteOperadorConPrecedencia(String expression) {
+        // Buscar primero los de más precedencia
+        TuplePair<Character, Integer> posChar = firstIndexOfAny(expression, operadoresNivel1.toCharArray());
+        if (posChar != null) {
+            return posChar;
+        }
+        // Después buscar en los de menos precedencia.
+        posChar = firstIndexOfAny(expression, operadoresNivel2.toCharArray());
+        if (posChar != null) {
+            return posChar;
         }
 
-        return new TuplePair<>('\u0000', -1);
+//        for (char op : operadores) {
+//            int pos = expression.indexOf(op);
+//            if (pos > -1) {
+//                return new TuplePair<>(op, pos);
+//            }
+//        }
+
+        return null; // new TuplePair<>('\u0000', -1);
     }
 
     /**
@@ -304,7 +333,7 @@ public final class Evaluar {
      * @return La cadena con el número hallado.
      *         Si el número hallado lo precede - y delante hay otro operador es que es un número negativo.
      */
-    static String buscarUnNumero(String expression, boolean elAnterior) {
+    private static String buscarUnNumero(String expression, boolean elAnterior) {
         StringBuilder sb = new StringBuilder();
         var a = expression.toCharArray();
         // Cuando se busca el anterior se hace desde el final,
@@ -316,7 +345,7 @@ public final class Evaluar {
 
         // Si la expresión solo contiene el operador - considerarlo como un número negativo.
         var unOp = hayUnOperador(expression);
-        if (unOp.positionEsta) {
+        if (unOp.position > -1) {
             if (unOp.operador == '-') {
                 // Solo si empieza con ese operador.
                 if (expression.charAt(0) == unOp.operador) {
@@ -375,13 +404,54 @@ public final class Evaluar {
         return sb.toString().trim();
     }
 
+    // Buscar en una cadena cualquiera de los caracteres indicados. (19/nov/22 03.58)
+
+    /**
+     * Busca en la cadena cualquiera de los caracteres indicados.
+     * @param expression La cadena a evaluar.
+     * @param anyOf Los caracteres a comprobar en la cadena.
+     * @return La posición y el carácter del primer carácter que encuentre o -1 si no hay ninguno.
+     */
+    private static TuplePair<Character, Integer> indexOfAny(String expression, char[] anyOf) {
+        for (char c : anyOf) {
+            int pos = expression.indexOf(c);
+            if (pos > -1) {
+                return new TuplePair<>(c, pos);
+            }
+        }
+        return new TuplePair<>('\u0000', -1);
+    }
+
+    /**
+     * Busca en la cadena los caracteres indicados y devuelve la primera ocurrencia.
+     * Si alguno de los caracteres está en la cadena, devuelve el que esté antes.
+     * @param expression La cadena a evaluar.
+     * @param anyOf Los caracteres a comprobar en la cadena.
+     * @return La posición y el carácter del primero que encuentre en la cadena o un valor null si no hay ninguno.
+     */
+    private static TuplePair<Character, Integer> firstIndexOfAny(String expression, char[] anyOf) {
+        TuplePair<Character, Integer> menor = null;
+        for (char c : anyOf) {
+            int pos = expression.indexOf(c);
+            if (pos > -1) {
+                if (menor == null) {
+                    menor = new TuplePair<>(c, pos);
+                }
+                else if (menor.position > pos) {
+                    menor = new TuplePair<>(c, pos);
+                }
+            }
+        }
+        return menor;
+    }
+
     /**
      * Tuple de dos valores para usar al buscar un operador y la posición del mismo.
      * @param operador Un valor del tipo T1.
-     * @param positionEsta Un valor del tipo T2.
+     * @param position Un valor del tipo T2.
      * @param <T1> El tipo (por referencia) del primer parámetro.
      * @param <T2> El tipo (por referencia) del segundo parámetro.
      */
-    record TuplePair<T1, T2>(T1 operador, T2 positionEsta) {
+    record TuplePair<T1, T2>(T1 operador, T2 position) {
     }
 }
