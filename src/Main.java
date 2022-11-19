@@ -19,33 +19,35 @@ public class Main {
 
         Evaluar.mostrarParciales = true;
 
-        enum ConsoleColor {
-            reset ("\u001B[0m"),
-            black ("\033[30m"),
-            red ("\033[31m"),
-            green ("\033[32m"),
-            yellow ("\033[33m"),
-            blue ("\033[34m"),
-            purple ("\033[35m"),
-            cyan ("\033[36m"),
-            white ("\033[37m"),
-            redBack ("\033[41m"),
-            greenBack ("\033[42m"),
-            yellowBack ("\u001B[43m");
-            ConsoleColor(String color) {
-                this.elColor = color;
-            }
-            private final String elColor;
-            }
+        // Los colores para la consola.
+        //  El 3 en el segundo valor es para el texto
+        //  El 4 en el segundo valor es para el fondo.
+        /**
+         * Para indicar el color del texto o del fondo al mostrarlo por la consola.
+         */
+        final class ConsoleColor {
+            static final String black = "\033[30m";
+            static final String red = "\033[31m";
+            static final String redBack = "\033[41m";
+            static final String green = "\033[32m";
+            static final String greenBack = "\033[42m";
+            static final String yellow = "\033[33m";
+            static final String yellowBack = "\u001B[43m";
+            static final String blue = "\033[34m";
+            static final String purple = "\033[35m";
+            static final String cyan = "\033[36m";
+            static final String white = "\033[37m";
+            static final String reset = "\u001B[0m";
+        }
 
         String res;
 
         while (true) {
 
-            System.out.print(ConsoleColor.yellow.elColor);
+            System.out.print(ConsoleColor.yellow);
             System.out.println("Evaluar expresiones simples de números con decimales.");
-            System.out.print(ConsoleColor.reset.elColor);
-            System.out.println(ConsoleColor.green.elColor);
+            System.out.print(ConsoleColor.reset);
+            System.out.println(ConsoleColor.green);
             System.out.println("Opciones:");
             System.out.print(" Mostrar las operaciones parciales:");
             System.out.println("  1: Sí, 2: No");
@@ -53,7 +55,7 @@ public class Main {
             System.out.println(" 3: Sí, 4: No");
             System.out.print(" Indicar una expresión a evaluar:");
             System.out.println("    5: Sí, 6: No (se usa una de prueba)");
-            System.out.print(ConsoleColor.reset.elColor);
+            System.out.print(ConsoleColor.reset);
             System.out.print("Indica las opciones a usar, 0=salir (ej: 146) [145]: ");
 
             //System.out.print("Mostrar las operaciones parciales? ([S|s] = sí, otro = no) ");
