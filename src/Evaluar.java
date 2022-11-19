@@ -8,8 +8,6 @@
 
 //package com.example.evaluar;
 
-import java.util.ArrayList;
-
 public final class Evaluar {
     public static void main (String[] args) {
         String hola = "Hola";
@@ -166,7 +164,7 @@ public final class Evaluar {
             if (donde == null) {
                 // si no hay operadores y op1 es null, evaluar la expresión.
                 if (op1 == null) {
-                    resultado = Double.parseDouble(expression);;
+                    resultado = Double.parseDouble(expression);
                 }
                 break;
             }
@@ -339,7 +337,6 @@ public final class Evaluar {
      */
     private static TuplePair<Character, Integer> hayUnOperador(String expression) {
         int cuantos = 0;
-        char elOperador = '\u0000';
         TuplePair<Character, Integer> res = new TuplePair<>('\u0000', -1);
         for(char op : operadores) {
             int pos = expression.indexOf(op);
@@ -348,21 +345,21 @@ public final class Evaluar {
                 // Asignar solo el primero.
                 if (cuantos == 1) {
                     res = new TuplePair<>(op,  pos);
-                    elOperador = op;
                     // Puede que este mismo operador está más de una vez.
-                    if (pos < expression.length()) {
-                        int pos2 = expression.indexOf(op, pos+1);
-                        if (pos2 > -1) {
-                            cuantos++;
-                        }
+                    int pos2 = expression.indexOf(op, pos+1);
+                    if (pos2 > -1) {
+                        cuantos++;
                     }
+//                    if (pos < expression.length()) {
+//                        int pos2 = expression.indexOf(op, pos+1);
+//                        if (pos2 > -1) {
+//                            cuantos++;
+//                        }
+//                    }
                 }
             }
         }
         if (cuantos != 1) {
-//            //res = new TuplePair<>(elOperador, true);
-//        }
-//        else {
             res = new TuplePair<>('\u0000', -1);
         }
 
@@ -382,18 +379,7 @@ public final class Evaluar {
         }
         // Después buscar en los de menos precedencia.
         posChar = firstIndexOfAny(expression, operadoresNivel2.toCharArray());
-        if (posChar != null) {
-            return posChar;
-        }
-
-//        for (char op : operadores) {
-//            int pos = expression.indexOf(op);
-//            if (pos > -1) {
-//                return new TuplePair<>(op, pos);
-//            }
-//        }
-
-        return null; // new TuplePair<>('\u0000', -1);
+        return posChar;
     }
 
     /**
