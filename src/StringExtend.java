@@ -8,9 +8,11 @@ public class StringExtend {
         var anyOf = "aeiou";
         int pos = indexOfAny(hola, anyOf.toCharArray());
         String esta = pos > -1 ? "está en la posición " + pos : "no está";
+        System.out.println("Usando indexOfAny:");
         System.out.printf("En '%s' %s uno de los caracteres de %s\n", hola, esta, anyOf);
         System.out.println();
 
+        System.out.println("Usando firstIndexOfAny:");
         pos = firstIndexOfAny(hola, anyOf.toCharArray());
         System.out.printf("En '%s' de los caracteres de %s, el primero está en la posición %d\n", hola, anyOf, pos);
     }

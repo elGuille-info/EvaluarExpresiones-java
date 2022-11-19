@@ -183,6 +183,10 @@ public class Main {
         }
     }
 
+    /**
+     * Mostrar el resultado de la expresión indicada.
+     * @param expression La expresión a evaluar.
+     */
     private static void mostrarResultado(String expression) {
         System.out.print(expression + " = ");
         long startTime = System.nanoTime();

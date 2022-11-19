@@ -15,13 +15,80 @@ public final class Evaluar {
         String hola = "Hola";
         var anyOf = "aeiou";
         var pos = indexOfAny(hola, anyOf.toCharArray());
+        System.out.println("Usando indexOfAny:");
         String esta = pos.position > -1 ? "'" + pos.operador + "' está en la posición " + pos.position : "no está ninguno";
         System.out.printf("En '%s' de los caracteres de %s %s\n", hola, anyOf, esta);
         System.out.println();
 
+        System.out.println("Usando firstIndexOfAny:");
         pos = firstIndexOfAny(hola, anyOf.toCharArray());
         esta = pos == null ? "no hay ninguno" :  "'" + pos.operador + "' está en la posición " + pos.position;
         System.out.printf("En '%s' de los caracteres de %s, %s\n", hola, anyOf, esta);
+
+        double prueba1, res;
+
+        System.out.println();
+        System.out.println("Resultados del compilador:");
+
+        String expression = "1+2*3+6";
+        prueba1 = 1+2*3+6;
+        System.out.printf("%s = %s\n",expression, prueba1);
+        expression = "99-15+2*7";
+        prueba1 = 99-15+2*7;
+        System.out.printf("%s = %s\n",expression, prueba1);
+
+        System.out.println("Resultados del evaluador:");
+        expression = "1+2*3+6";
+        System.out.print(expression + " = ");
+        res = Evaluar.evaluar(expression);
+        System.out.println(res);
+        expression = "99-15+2*7";
+        System.out.print(expression + " = ");
+        res = Evaluar.evaluar(expression);
+        System.out.println(res);
+
+        System.out.println("Operaciones comprometidas:");
+        prueba1 = 7-7/1*1+3;
+        expression = "7-7/1*1+3";
+        System.out.printf("Java dice: %s = %s\n",expression, prueba1);
+        System.out.printf("Evaluar dice: %s = ", expression);
+        res = Evaluar.evaluar(expression);
+        System.out.println(res);
+        prueba1 = 12+8/2*2-1;
+        expression = "12+8/2*2-1";
+        System.out.printf("Java dice: %s = %s\n",expression, prueba1);
+        System.out.printf("Evaluar dice: %s = ", expression);
+        res = Evaluar.evaluar(expression);
+        System.out.println(res);
+        // 6^2 / 2(3) + 4
+        prueba1 = 36 / 2*(3) +4;
+        expression = "36 / 2*(3) +4";
+        System.out.printf("Java dice: %s = %s\n",expression, prueba1);
+        System.out.printf("Evaluar dice: %s = ", expression);
+        res = Evaluar.evaluar(expression);
+        System.out.println(res);
+        // 6/2(2+1)
+        prueba1 = 6/2*(2+1);
+        expression = "6/2*(2+1)";
+        System.out.printf("Java dice: %s = %s\n",expression, prueba1);
+        System.out.printf("Evaluar dice: %s = ", expression);
+        res = Evaluar.evaluar(expression);
+        System.out.println(res);
+        mostrarParciales = true;
+        //6/(2(2+1))
+        prueba1 = 6/(2*(2+1));
+        expression = "6/(2*(2+1))";
+        System.out.printf("Java dice: %s = %s\n",expression, prueba1);
+        System.out.printf("Evaluar dice: %s = ", expression);
+        res = Evaluar.evaluar(expression);
+        System.out.println(res);
+        // 2 – (10 x 2) / 6
+        prueba1 = 2 - (10 * 2) / 6;
+        expression = "2 - (10 * 2) / 6";
+        System.out.printf("Java dice: %s = %s\n",expression, prueba1);
+        System.out.printf("Evaluar dice: %s = ", expression);
+        res = Evaluar.evaluar(expression);
+        System.out.println(res);
     }
 
     /**
@@ -89,7 +156,7 @@ public final class Evaluar {
 
         // Evaluar la expresión indicada.
 
-        String op1, op2;
+        String op1 = null, op2;
         double resultado = 0;
         TuplePair<Character, Integer> donde;
 
@@ -97,6 +164,10 @@ public final class Evaluar {
             // Buscar la operación a realizar.
             donde = siguienteOperadorConPrecedencia(expression);
             if (donde == null) {
+                // si no hay operadores y op1 es null, evaluar la expresión.
+                if (op1 == null) {
+                    resultado = Double.parseDouble(expression);;
+                }
                 break;
             }
 
