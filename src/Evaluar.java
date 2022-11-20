@@ -15,7 +15,7 @@ import java.util.Arrays;
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
  * @author Guillermo Som (Guille), iniciado el 16/nov/2022
- * @version 1.1.1.5.221120
+ * @version 1.1.1.6.221120
  */
 public final class Evaluar {
     public static void main (String[] args) throws IOException {
@@ -66,7 +66,6 @@ public final class Evaluar {
         expression = "1.5*3.0+12-(-15+5)*2 + 10%3";
         System.out.printf("Escribe una expresión a evaluar (0 para mostrar las pruebas) [%s] ", expression);
         res = in.readLine();
-        //System.out.println();
         if (!res.equals("0")) {
             if (!res.equals("")) {
                 expression = res;
@@ -77,7 +76,6 @@ public final class Evaluar {
             }
             mostrarParciales = true;
             resD = Evaluar.evaluar(expression);
-            //System.out.println(resD);
 
             System.out.printf("Con Evaluar: %s = %f", expression, resD);
         }
@@ -141,8 +139,6 @@ public final class Evaluar {
             resD = Evaluar.evaluar(expression);
             System.out.println(resD);
         }
-//        resD = Evaluar.evaluar(expression);
-//        System.out.println(resD);
     }
 
     /**
