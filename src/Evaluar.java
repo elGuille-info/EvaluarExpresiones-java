@@ -17,7 +17,7 @@ import java.util.Arrays;
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
  * @author Guillermo Som (Guille), iniciado el 16/nov/2022
- * @version 1.1.1.0.221120
+ * @version 1.1.1.*.221120
  */
 public final class Evaluar {
     public static void main (String[] args) throws IOException {
@@ -148,7 +148,15 @@ public final class Evaluar {
      */
     public static boolean mostrarParciales = false;
 
-    private static final String operadoresNivel1 = "*/%";
+    /**
+     * Los operadores multiplicativos.
+     * Se puede usar la x para multiplicar y los dos puntos para dividir.
+     */
+    private static final String operadoresNivel1 = "x*:/%";
+
+    /**
+     * Los operadores aditivos.
+     */
     private static final String operadoresNivel2 = "+-";
 
     /**
@@ -196,7 +204,7 @@ public final class Evaluar {
      * Se evalúan las operaciones (entre enteros) de suma (+), resta (-), multiplicación (*) y división (/).
      * @param expression La expresión a evaluar.
      * @return Un valor entero con el resultado de la expresión evaluada.
-     * @version 1.1.1.1.221120
+     * @version 1.1.1.3.221120
      */
     private static double evaluarExp(String expression) {
         // Quitar todos los caracteres en blanco.
@@ -207,13 +215,6 @@ public final class Evaluar {
         }
 
         int cuantos;
-//        // Si la expresión no tiene operadores o empieza por signo - y no contiene más operadores,
-//        // devolver el número.
-//        int cuantos = cuantosOperadores(expression);
-//        if (cuantos == 0 || expression.startsWith("-") && cuantos == 1) {
-//            return Double.parseDouble(expression);
-//        }
-
         String op1 = null, op2;
         double resultado = 0;
         TuplePair<Character, Integer> donde;
@@ -304,8 +305,8 @@ public final class Evaluar {
             resultado = switch (donde.operador) {
                 case '+' -> res1 + res2;
                 case '-' -> res1 - res2;
-                case '*' -> res1 * res2;
-                case '/' -> res1 / res2;
+                case '*', 'x' -> res1 * res2;
+                case '/', ':' -> res1 / res2;
                 case '%' -> res1 % res2;
                 default -> 0;
             };
