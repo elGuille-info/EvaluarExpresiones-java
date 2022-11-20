@@ -2,9 +2,7 @@
 // Se permite *, /, %, +, - con este nivel de precedencia.
 // Las expresiones entre paréntesis se evalúan primero.
 //
-//  op1 + op2 * op3 se evalúa como op1 + (op2*op3)
-//  op1 * op2 + op3 se evalúa como (op1*op2) + op3
-
+// También se puede usar 'x' para multiplicar y ':' para dividir.
 
 //package com.example.evaluar;
 
@@ -17,7 +15,7 @@ import java.util.Arrays;
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
  * @author Guillermo Som (Guille), iniciado el 16/nov/2022
- * @version 1.1.1.4.221120
+ * @version 1.1.1.5.221120
  */
 public final class Evaluar {
     public static void main (String[] args) throws IOException {
@@ -197,9 +195,10 @@ public final class Evaluar {
 
     /**
      * Evalúa la expresión indicada quitando los espacios en blanco, (no hay expresiones entre paréntesis).
-     * Se evalúan las operaciones (entre enteros) de suma (+), resta (-), multiplicación (*) y división (/).
+     * Se evalúan las operaciones (entre dobles) de suma, resta, multiplicación y división.
+     *
      * @param expression La expresión a evaluar.
-     * @return Un valor entero con el resultado de la expresión evaluada.
+     * @return Un valor doble con el resultado de la expresión evaluada.
      */
     private static double evaluarExp(String expression) {
         // Quitar todos los caracteres en blanco.
@@ -211,49 +210,42 @@ public final class Evaluar {
 
         int cuantos;
         String op1 = null, op2;
-        double resultado = 0;
+        // Para que tenga un valor asignado,
+        //  antes del return resultado del final ya estará asignada correctamente.
+        double resultado = -1;
         TuplePair<Character, Integer> donde;
         int desde;
 
         while (true) {
-        //do {
-//            // Si la expresión no tiene operadores o empieza por signo - y no contiene más operadores,
-//            // devolver el número.
-//            cuantos = cuantosOperadores(expression);
-//            if (cuantos == 0 || expression.startsWith("-") && cuantos == 1) {
-//                return Double.parseDouble(expression);
-//            }
-
             desde = 0;
             // Buscar la operación a realizar.
             donde = siguienteOperadorConPrecedencia(expression, desde);
             // Si no hay más operadores.
             if (donde == null) {
-                // Si no hay operadores y op1 es null, evaluar la expresión.
+                // Si no hay operadores y el resultado no se ha procesado, devolver el valor de la expresión.
+                //
+                // Este caso se me ha dado al evaluar una expresión entre paréntesis sin operadores.
+                // Esto normalmente se dará si toda la expresión estaba entre paréntesis,
+                //  se ha evaluado y la cadena contiene el resultado,
+                //  pero la variable 'resultado' aún no se ha calculado.
+                /* NOTA:
+                 * Comprobar si op1 es null, no comprobar, por ejemplo, si resultado es -1,
+                 * ya que puede haber un resultado que sea -1.
+                 */
                 if (op1 == null) {
-                    // También se puede usar return Double.parseDouble(expression);
-                    resultado = Double.parseDouble(expression);
+                    return Double.parseDouble(expression);
                 }
-                // También se puede usar return resultado;
-                break;
+                // Si llega aquí es que 'resultado' tiene un valor asignado
+                //  con el resultado final de la expresión evaluada,
+                //  por tanto, salir del while (con break) o devolver el resultado (con return resultado).
+                // Así queda más claro que se sale de la función devolviendo el resultado.
+                return resultado;
             }
-//            else {
-//                // Hay algún operador, comprobar si empieza por - y no hay más operadores.
-//                if (donde.operador == '-') {
-//                    cuantos = cuantosOperadores(expression);
-//                    // Si solo está ese operador, devolver el valor.
-//                    // Si empieza por -.
-//                    if (cuantos == 1 && expression.startsWith(("-"))) {
-//                        return Double.parseDouble(expression);
-//                    }
-//                }
-//            }
 
             // Si la posición es cero es que delante no hay nada.
             // O es un número negativo. (18/nov/22 16.27)
             // O hay una expresión a evaluar. (20/nov/22 09.23)
             if (donde.position == 0) {
-                // if (expression.startsWith("-") || expression.startsWith("+")) {
                 if (donde.operador == '-') {
                     // Comprobar si hay más operaciones. (20/nov/22 09.23)
                     cuantos = cuantosOperadores(expression);
@@ -284,23 +276,19 @@ public final class Evaluar {
             double res1, res2;
 
             // Asignar todos los caracteres hasta el signo al primer operador.
-            // Antes: op1 = expression.substring(0, donde.position).trim();
             op1 = expression.substring(desde, donde.position).trim();
             // La variable op1 puede tener la expresión 16.5--20.0 y al convertirla a doble falla.
             // Ahora en buscarUnNumero se comprueba si la expresión tiene un número negativo.
-            var op11 = buscarUnNumero(op1, true);
-            op1 = op11;
-            //op1 = buscarUnNumero(op1, true);
+            op1 = buscarUnNumero(op1, true);
             res1 = Double.parseDouble(op1);
 
             // op2 tendrá el resto de la expresión.
             op2 = expression.substring(donde.position + 1).trim();
             // Buscar el número hasta el siguiente operador.
-            var op22 = buscarUnNumero(op2, false);
-            op2= op22;
-            //op2 = buscarUnNumero(op2, false);
+            op2 = buscarUnNumero(op2, false);
             res2 = Double.parseDouble(op2);
 
+            // Hacer el cálculo de la operación
             resultado = switch (donde.operador) {
                 case '+' -> res1 + res2;
                 case '-' -> res1 - res2;
@@ -344,14 +332,15 @@ public final class Evaluar {
             else {
                 expression = expression.substring(0,  posOp) + elResultado + expression.substring(posOp + laOperacion.length());
             }
-            //hay = hayOperador(expression);
-        } //while (hayOperador(expression));
+        }
 
-        return resultado;
+        // Si no hay break en el bucle while, aquí no llegará nunca.
+        //return resultado;
     }
 
     /**
      * Evalúa el contenido de las expresiones entre paréntesis.
+     *
      * @param expression Expresión a evaluar (puede tener o no paréntesis).
      * @return La cadena sin los paréntesis y con lo que haya entre paréntesis ya evaluado.
      */
@@ -420,22 +409,9 @@ public final class Evaluar {
         return expression;
     }
 
-//    /**
-//     * Comprueba si la cadena indicada tiene alguno de los operadores aceptados.
-//     * @param expression La cadena a comprobar.
-//     * @return True si contiene algún operador, false en caso contrario.
-//     */
-//    private static boolean hayOperador(String expression) {
-//        for (char c : operadores) {
-//            if (expression.indexOf(c) > -1) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
     /**
      * Cuenta cuántos operadores hay en la expresión.
+     *
      * @param expression La expresión a comprobar.
      * @return El número total de operadores en la expresión.
      */
@@ -455,6 +431,7 @@ public final class Evaluar {
 
     /**
      * Comprueba si hay un solo operador, si lo hay devuelve un tuple con el carácter y la posición.
+     *
      * @param expression La expresión a evaluar.
      * @return Si solo hay un operador, devuelve un tuple con el operador y la posición,
      *         en otro caso devuelve '\u0000' y -1.
@@ -488,6 +465,7 @@ public final class Evaluar {
 
     /**
      * Busca el siguiente signo de operación (teniendo en cuenta la precedencia: * / % + -).
+     *
      * @param expression La expresión a evaluar.
      * @param fromIndex La posición desde la que se buscará en la cadena.
      * @return Una tuple con el operador hallado y la posición en la expresión o null si no se ha hallado.
@@ -505,6 +483,7 @@ public final class Evaluar {
 
     /**
      * Busca el número anterior o siguiente.
+     *
      * @param expression  La expresión a evaluar.
      * @param elAnterior True si se busca el número anterior (desde el final),
      *                   en otro caso se busca el número siguiente (desde el principio).
@@ -586,6 +565,7 @@ public final class Evaluar {
 
     /**
      * Busca en la cadena cualquiera de los caracteres indicados.
+     *
      * @param expression La cadena a evaluar.
      * @param anyOf Los caracteres a comprobar en la cadena.
      * @return La posición y el carácter del primer carácter que encuentre o -1 si no hay ninguno.
@@ -603,6 +583,7 @@ public final class Evaluar {
     /**
      * Busca en la cadena los caracteres indicados y devuelve la primera ocurrencia.
      * Si alguno de los caracteres está en la cadena, devuelve el que esté antes.
+     *
      * @param expression La cadena a evaluar.
      * @param anyOf Los caracteres a comprobar en la cadena.
      * @return La posición y el carácter del primero que encuentre en la cadena o un valor null si no hay ninguno.
@@ -625,6 +606,7 @@ public final class Evaluar {
 
     /**
      * Tuple de dos valores para usar al buscar un operador y la posición del mismo.
+     *
      * @param operador Un valor del tipo T1.
      * @param position Un valor del tipo T2.
      * @param <T1> El tipo (por referencia) del primer parámetro.
