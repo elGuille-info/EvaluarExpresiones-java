@@ -15,3 +15,45 @@ Para multiplicar se puede usar * o x, para dividir se puede usar / o :.
 <br>
 
 Estoy usando el IDE [IntelliJ IDEA 2022.2.3 (Community Edition) de JetBrains](https://www.jetbrains.com/idea/whatsnew/) usando el SDK [openjdk-19 de Oracle](https://www.oracle.com/java/technologies/javase/jdk19-archive-downloads.html) instalado automáticamente por el IDE al usar características no incluidas en el que tenía instalado (versión 11.0.12).
+
+<br>
+
+## EvaluarExpresiones v1.1.1.* del 20-nov-2022
+Detalles de lo que hace el evaluador de expresiones actualmente:
+
+Salvo que surja algún error en otras expresiones diferentes a las comprobadas, la funcionalidad básica para trabajar con valores dobles (tipo double) no exponenciales está completada.
+
+> **Lo que hace:**<br>
+> Evalúa expresiones entre paréntesis (con varios niveles de anidación).<br>
+> Evalúa primero los operadores multiplicativos (* y x para multiplicar, / y : para dividir y % para el módulo) y después los operadores aditivos (+ para sumar, - para restar).<br>
+> Las expresión pueden tener espacios, pero al evaluarla se quitan, por tanto: 1 5 * 2 se convierte en 15*2.<br>
+
+<br>
+Algunas de las expresiones comprobadas:
+
+```
+1.5*3+12-(-15+5)*2 + 10%3 = 37.5
+1.5**3+12-(15+5)*2 + 10%3 = -22.5
+2.5*5.5+1.5*2+22*5 = 126.75
+1.5+2*5+3+4+22*5 = 128.5
+15+2*5+3+4+22*5 = 142.0
+1+2)*5+3+4 = 18.0
+(1+2*5+3+4 = 18.0
+((1+2)*(5+3+4) = 36.0
+(1+2)*5+3+4 = 22.0
+((1+2)*5+3+4) = 22.0
+(1+2)*(5+3)+4 = 28.0
+1+2*5+3+4 = 18.0
+1 + 2 + 3 + 4*5 = 26.0
+2*5 + 3*2 + 3 + 4*5 + 3*2 = 45.0
+
+17 * ((12+5) * (7-2))  = 1445.0
+1+2*3+6 = 13.0
+99-15+2*7 = 98.0
+36.0 / 2*(3) +4 = 58.0
+6.0/2*(2+1) = 9.0
+6.0/(2*(2+1)) = 1.0
+2 - (10.0 * 2) / 6 = -1.3333333333333335
+
+```
+
