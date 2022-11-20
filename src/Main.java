@@ -70,13 +70,13 @@ public class Main {
             if (res.contains("5")) {
                 System.out.printf("Escribe una expresión a evaluar [%s] ", expression);
                 var res2 = in.readLine();
-                System.out.println();
+                //System.out.println();
                 if (!res2.equals("")) {
                     expression = res2;
                 }
             }
             mostrarResultado(expression);
-            System.out.println();
+            //System.out.println();
 
             if (mostrarEjemplos) {
                 // En los ejemplos no mostrar los cálculos parciales.
@@ -150,15 +150,15 @@ public class Main {
             }
 
             //System.err.flush();
-            //System.out.println();
-            System.out.print("\nPulsa INTRO para ir al menú (0 para terminar) ");
-            res = in.readLine();
             System.out.println();
-            if (res.equals("0")) {
-                System.out.println("Se termina el programa.");
-                return;
-            }
-            System.out.println("\n");
+//            System.out.print("\nPulsa INTRO para ir al menú (0 para terminar) ");
+//            res = in.readLine();
+//            System.out.println();
+//            if (res.equals("0")) {
+//                System.out.println("Se termina el programa.");
+//                return;
+//            }
+//            System.out.println("\n");
         }
     }
 
@@ -168,15 +168,18 @@ public class Main {
      * @param expression La expresión a evaluar.
      */
     private static void mostrarResultado(String expression) {
-        System.out.print(expression + " = ");
+        //System.out.print(expression + " = ");
         long startTime = System.nanoTime();
         //long iniTime = System.currentTimeMillis();
         var res = Evaluar.evaluar(expression);
+        System.out.print(expression + " = ");
         System.out.println(res);
         long elapsedTime = System.nanoTime() - startTime;
         //long elapsedTime = System.currentTimeMillis() - iniTime;
         if (mostrarTiempoEmpleado) {
-            System.out.printf("  Tiempo empleado: %,.2f ns/1.000\n", (elapsedTime / 1000.0));
+            System.out.print(ConsoleColor.blue);
+            System.out.printf("\tTiempo empleado: %,.2f ns/1.000\n", (elapsedTime / 1000.0));
+            System.out.print(ConsoleColor.reset);
         }
     }
 }
