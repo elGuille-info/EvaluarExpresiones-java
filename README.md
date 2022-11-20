@@ -1,5 +1,7 @@
 # EvaluarExpresiones-java
-Ejemplo de evaluar expresiones en Java
+Ejemplo de evaluar expresiones usando código de Java.
+
+Evalúa expresiones simples de suma, resta, multiplicación, división y módulo, se pueden indicar paréntesis para cambiar la precedencia.
 
 <br>
 
