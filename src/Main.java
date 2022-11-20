@@ -79,22 +79,7 @@ public class Main {
             Evaluar.mostrarParciales = res.contains("1");
             mostrarEjemplos = res.contains("3");
 
-            //expression = "1.5**3+12-(15+5)*2 + 10%3";
-            //expression = "99-15+2*7";
-            // Ya que + se evalúa antes que -, esto se evalúa como:
-            //  2*7=14, 15+14=29, 99-29 = 70
-            // Tendría que ser como si se pusiera así: (99-15)+2*7
-            //  2*7=14, 99-15=84, 84+14=98
-            // Si es el mismo nivel de precedencia, se evaluaría:
-            // 99-15+ (2*7) = 99-15=84 + 2*7=14 -> 84+14= 98
-            double prueba1;
-            expression = "1+2*3+6";
-            prueba1 = 1+2*3+6;
-            System.out.printf("%s = %s\n",expression, prueba1);
             expression = "99-15+2*7";
-            prueba1 = 99-15+2*7;
-            System.out.printf("%s = %s\n",expression, prueba1);
-            //expression = "(99-15)+2*7";
             if (res.contains("5")) {
                 System.out.printf("Escribe una expresión a evaluar [%s] ", expression);
                 var res2 = in.readLine();
@@ -106,14 +91,12 @@ public class Main {
             mostrarResultado(expression);
             System.out.println();
 
-            // Probar con cadenas con caracteres no válidos.
-
             if (mostrarEjemplos) {
                 // En los ejemplos no mostrar los cálculos parciales.
                 var mostrarParcialesAnt = Evaluar.mostrarParciales;
                 Evaluar.mostrarParciales = false;
 
-                // Esto fallará porque (-15+5) se evalúa correctamente a -10,
+                // Esto fallaba porque (-15+5) se evalúa correctamente a -10,
                 // pero al estar multiplicado por 2, la operación se intenta en:
                 // --10*2 tomando el valor 10*2 y la operación final quedará como:
                 // (1.5*3)+12 --10*2 + 1

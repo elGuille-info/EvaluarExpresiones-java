@@ -8,91 +8,138 @@
 
 //package com.example.evaluar;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
 /**
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
  * @author Guillermo Som (Guille), 16/nov/2022
- * @version 1.1.0.0
+ * @version 1.1.0.1
  */
 public final class Evaluar {
-    public static void main (String[] args) {
-        String hola = "Hola";
-        var anyOf = "aeiou";
-        var pos = indexOfAny(hola, anyOf.toCharArray());
-        System.out.println("Usando indexOfAny:");
-        String esta = pos.position > -1 ? "'" + pos.operador + "' está en la posición " + pos.position : "no está ninguno";
-        System.out.printf("En '%s' de los caracteres de %s %s\n", hola, anyOf, esta);
-        System.out.println();
+    public static void main (String[] args) throws IOException {
+        String hola;
+        String anyOf;
+        TuplePair<Character, Integer> pos;
+        String esta;
+        String res;
+        BufferedReader in;
+        final String vocales = "aeiou";
+        String expression;
+        double resD;
+        double pruebaD;
 
-        System.out.println("Usando firstIndexOfAny:");
-        pos = firstIndexOfAny(hola, anyOf.toCharArray());
-        esta = pos == null ? "no hay ninguno" :  "'" + pos.operador + "' está en la posición " + pos.position;
-        System.out.printf("En '%s' de los caracteres de %s, %s\n", hola, anyOf, esta);
+        System.out.printf("Indica las letras a comprobar (0 para no comprobar cadenas) [%s]: ", vocales);
+        // Con BufferedReader se puede pulsar INTRO,
+        //  siempre que el out anterior no acabe en nueva línea??? (o eso me ha parecido).
+        in = new BufferedReader(
+                new InputStreamReader(System.in));
+        res = in.readLine();
+        if (!res.equals("0")) {
+            if (res.equals("")) {
+                res = "aeiou";
+            }
+            anyOf = res;
 
-        double prueba1, res;
+            System.out.print("Indica la palabra para comprobar si tiene alguna de las letras indicadas [Hola]: ");
+            in = new BufferedReader(
+                    new InputStreamReader(System.in));
+            res = in.readLine();
+            if (res.equals("")) {
+                res = "Hola";
+            }
+            hola = res;
+            System.out.println();
 
-        System.out.println();
-        System.out.println("Resultados del compilador:");
+            pos = indexOfAny(hola, anyOf.toCharArray());
+            System.out.println("Usando indexOfAny:");
+            esta = pos.position > -1 ? "'" + pos.operador + "' está en la posición " + pos.position : "no está ninguno";
+            System.out.printf("En '%s' de los caracteres de %s %s\n", hola, anyOf, esta);
 
-        String expression = "1+2*3+6";
-        prueba1 = 1+2*3+6;
-        System.out.printf("%s = %s\n",expression, prueba1);
-        expression = "99-15+2*7";
-        prueba1 = 99-15+2*7;
-        System.out.printf("%s = %s\n",expression, prueba1);
+            System.out.println("Usando firstIndexOfAny:");
+            pos = firstIndexOfAny(hola, anyOf.toCharArray(), 0);
+            esta = pos == null ? "no hay ninguno" : "'" + pos.operador + "' está en la posición " + pos.position;
+            System.out.printf("En '%s' de los caracteres de %s, %s\n", hola, anyOf, esta);
+            System.out.println();
+        }
+        expression = "1.5*3.0+12-(-15+5)*2 + 10%3";
+        System.out.printf("Escribe una expresión a evaluar (0 para mostrar las pruebas) [%s] ", expression);
+        res = in.readLine();
+        //System.out.println();
+        if (!res.equals("0")) {
+            if (!res.equals("")) {
+                expression = res;
+            }
+            if (expression.equals("1.5*3.0+12-(-15+5)*2 + 10%3")) {
+                pruebaD = 1.5 * 3.0 + 12 - (-15 + 5) * 2 + 10 % 3;
+                System.out.printf("Con Java: %s = %s\n", expression, pruebaD);
+            }
+            mostrarParciales = true;
+            System.out.printf("Con Evaluar: %s = ", expression);
+        }
+        else {
+            System.out.println();
+            System.out.println("Pruebas operaciones (Java y Evaluar):");
+            expression = "1.5*3+12-(-15+5)*2 + 10%3";
+            pruebaD = 1.5*3+12-(-15+5)*2 + 10%3;
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
 
-        System.out.println("Resultados del evaluador:");
-        expression = "1+2*3+6";
-        System.out.print(expression + " = ");
-        res = Evaluar.evaluar(expression);
-        System.out.println(res);
-        expression = "99-15+2*7";
-        System.out.print(expression + " = ");
-        res = Evaluar.evaluar(expression);
-        System.out.println(res);
+            expression = "17 * ((12+5) * (7-2)) ";
+            pruebaD = 17 * ((12 + 5) * (7 - 2));
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
 
-        System.out.println("Operaciones comprometidas:");
-        prueba1 = 7-7/1*1+3;
-        expression = "7-7/1*1+3";
-        System.out.printf("Java dice: %s = %s\n",expression, prueba1);
-        System.out.printf("Evaluar dice: %s = ", expression);
-        res = Evaluar.evaluar(expression);
-        System.out.println(res);
-        prueba1 = 12+8/2*2-1;
-        expression = "12+8/2*2-1";
-        System.out.printf("Java dice: %s = %s\n",expression, prueba1);
-        System.out.printf("Evaluar dice: %s = ", expression);
-        res = Evaluar.evaluar(expression);
-        System.out.println(res);
-        // 6^2 / 2(3) + 4
-        prueba1 = 36 / 2*(3) +4;
-        expression = "36 / 2*(3) +4";
-        System.out.printf("Java dice: %s = %s\n",expression, prueba1);
-        System.out.printf("Evaluar dice: %s = ", expression);
-        res = Evaluar.evaluar(expression);
-        System.out.println(res);
-        // 6/2(2+1)
-        prueba1 = 6/2*(2+1);
-        expression = "6/2*(2+1)";
-        System.out.printf("Java dice: %s = %s\n",expression, prueba1);
-        System.out.printf("Evaluar dice: %s = ", expression);
-        res = Evaluar.evaluar(expression);
-        System.out.println(res);
-        mostrarParciales = true;
-        //6/(2(2+1))
-        prueba1 = 6/(2*(2+1));
-        expression = "6/(2*(2+1))";
-        System.out.printf("Java dice: %s = %s\n",expression, prueba1);
-        System.out.printf("Evaluar dice: %s = ", expression);
-        res = Evaluar.evaluar(expression);
-        System.out.println(res);
-        // 2 – (10 x 2) / 6
-        prueba1 = 2 - (10 * 2) / 6;
-        expression = "2 - (10 * 2) / 6";
-        System.out.printf("Java dice: %s = %s\n",expression, prueba1);
-        System.out.printf("Evaluar dice: %s = ", expression);
-        res = Evaluar.evaluar(expression);
-        System.out.println(res);
+            expression = "1+2*3+6";
+            pruebaD = 1 + 2 * 3 + 6;
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+            expression = "99-15+2*7";
+            pruebaD = 99 - 15 + 2 * 7;
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+
+            // 6^2 / 2(3) + 4 (6 ^ 2 es 6 OR 2)
+            pruebaD = 36.0 / 2 * (3) + 4;
+            expression = "36.0 / 2*(3) +4";
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+            // 6/2(2+1)
+            pruebaD = 6.0 / 2 * (2 + 1);
+            expression = "6.0/2*(2+1)";
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+            //mostrarParciales = true;
+            //6/(2(2+1))
+            pruebaD = 6.0 / (2 * (2 + 1));
+            expression = "6.0/(2*(2+1))";
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+            // 2 – (10 x 2) / 6
+            pruebaD = 2 - (10.0 * 2) / 6;
+            expression = "2 - (10.0 * 2) / 6";
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+        }
+        resD = Evaluar.evaluar(expression);
+        System.out.println(resD);
     }
 
     /**
@@ -108,7 +155,6 @@ public final class Evaluar {
      * Sin incluir los paréntesis que se procesan por separado.
      */
     private static final String losOperadores = operadoresNivel1 + operadoresNivel2;
-    //static final String losOperadores = "*/%+-";
 
     /**
      * Array de tipo char con los operadores en el orden de precedencia.
@@ -163,10 +209,12 @@ public final class Evaluar {
         String op1 = null, op2;
         double resultado = 0;
         TuplePair<Character, Integer> donde;
+        int desde;
 
         do {
+            desde = 0;
             // Buscar la operación a realizar.
-            donde = siguienteOperadorConPrecedencia(expression);
+            donde = siguienteOperadorConPrecedencia(expression, desde);
             if (donde == null) {
                 // si no hay operadores y op1 es null, evaluar la expresión.
                 if (op1 == null) {
@@ -177,19 +225,40 @@ public final class Evaluar {
 
             // Si la posición es cero es que delante no hay nada.
             // O es un número negativo. (18/nov/22 16.27)
+            // O hay una expresión a evaluar. (20/nov/22 09.23)
             if (donde.position == 0) {
                 if (expression.startsWith("-") || expression.startsWith("+")) {
-                    return Double.parseDouble(expression);
+                    // Comprobar si hay más operaciones. (20/nov/22 09.23)
+                    int numOp = cuantosOperadores(expression);
+                    if (numOp == 1) {
+                        return Double.parseDouble(expression);
+                    }
+                    // Desglosar la operación, teniendo en cuenta que el primero es negativo.
+                    // Buscar el siguiente operador desde donde.position + 1.
+                    desde = donde.position + 1;
+                    var donde2 = siguienteOperadorConPrecedencia(expression, desde);
+                    if (donde2 == null || donde2.position == 0) {
+                        System.err.printf("No puedo evaluar '%s'.\n", expression);
+                        // No lanzar una excepción, devolver -1.
+                        return -1;
+                    }
+                    // Poner nuevamente el punto desde donde se analizó.
+                    desde = donde.position;
+                    // Reasignar la posición.
+                    donde = donde2;
                 }
-                System.err.println("La posición del operador es cero.");
-                // No lanzar una excepción, devolver -1.
-                return -1;
+                else {
+                    System.err.println("La posición del operador es cero.");
+                    // No lanzar una excepción, devolver -1.
+                    return -1;
+                }
             }
 
             double res1, res2;
 
             // Asignar todos los caracteres hasta el signo al primer operador.
-            op1 = expression.substring(0, donde.position).trim();
+            // Antes: op1 = expression.substring(0, donde.position).trim();
+            op1 = expression.substring(desde, donde.position).trim();
             // La variable op1 puede tener la expresión 16.5--20.0 y al convertirla a doble falla.
             // Ahora en buscarUnNumero se comprueba si la expresión tiene un número negativo.
             var op11 = buscarUnNumero(op1, true);
@@ -336,6 +405,24 @@ public final class Evaluar {
     }
 
     /**
+     * Cuenta cuántos operadores hay en la expresión.
+     * @param expression La expresión a comprobar.
+     * @return El número total de operadores en la expresión.
+     */
+    private static int cuantosOperadores(String expression) {
+        int cuantos = 0;
+        var copiaOperadores = operadores;
+        Arrays.sort(copiaOperadores);
+        for (char c : expression.toCharArray()) {
+            int p = Arrays.binarySearch(copiaOperadores, c);
+            if (p >= 0) {
+                cuantos++;
+            }
+        }
+        return cuantos;
+    }
+
+    /**
      * Comprueba si hay un solo operador, si lo hay devuelve un tuple con el carácter y la posición en la cadena.
      * @param expression La expresión a evaluar.
      * @return Si solo hay un operador, devuelve un tuple con el operador y la posición,
@@ -352,16 +439,12 @@ public final class Evaluar {
                 if (cuantos == 1) {
                     res = new TuplePair<>(op,  pos);
                     // Puede que este mismo operador está más de una vez.
-                    int pos2 = expression.indexOf(op, pos+1);
-                    if (pos2 > -1) {
-                        cuantos++;
+                    if (pos + 1 < expression.length()) {
+                        int pos2 = expression.indexOf(op, pos + 1);
+                        if (pos2 > -1) {
+                            cuantos++;
+                        }
                     }
-//                    if (pos < expression.length()) {
-//                        int pos2 = expression.indexOf(op, pos+1);
-//                        if (pos2 > -1) {
-//                            cuantos++;
-//                        }
-//                    }
                 }
             }
         }
@@ -375,16 +458,17 @@ public final class Evaluar {
     /**
      * Busca el siguiente signo de operación (teniendo en cuenta la precedencia: * / % + -).
      * @param expression La expresión a evaluar.
+     * @param fromIndex La posición desde la que se buscará en la cadena.
      * @return Una tuple con el operador hallado y la posición en la expresión o null si no se ha hallado.
      */
-    private static TuplePair<Character, Integer> siguienteOperadorConPrecedencia(String expression) {
+    private static TuplePair<Character, Integer> siguienteOperadorConPrecedencia(String expression, int fromIndex) {
         // Buscar primero los de más precedencia
-        TuplePair<Character, Integer> posChar = firstIndexOfAny(expression, operadoresNivel1.toCharArray());
+        TuplePair<Character, Integer> posChar = firstIndexOfAny(expression, operadoresNivel1.toCharArray(), fromIndex);
         if (posChar != null) {
             return posChar;
         }
         // Después buscar en los de menos precedencia.
-        posChar = firstIndexOfAny(expression, operadoresNivel2.toCharArray());
+        posChar = firstIndexOfAny(expression, operadoresNivel2.toCharArray(), fromIndex);
         return posChar;
     }
 
@@ -492,10 +576,10 @@ public final class Evaluar {
      * @param anyOf Los caracteres a comprobar en la cadena.
      * @return La posición y el carácter del primero que encuentre en la cadena o un valor null si no hay ninguno.
      */
-    private static TuplePair<Character, Integer> firstIndexOfAny(String expression, char[] anyOf) {
+    private static TuplePair<Character, Integer> firstIndexOfAny(String expression, char[] anyOf, int fromIndex) {
         TuplePair<Character, Integer> menor = null;
         for (char c : anyOf) {
-            int pos = expression.indexOf(c);
+            int pos = expression.indexOf(c, fromIndex);
             if (pos > -1) {
                 if (menor == null) {
                     menor = new TuplePair<>(c, pos);
