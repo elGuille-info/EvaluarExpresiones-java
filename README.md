@@ -2,6 +2,7 @@
 Ejemplo de evaluar expresiones usando código de Java.
 
 Evalúa expresiones simples de suma, resta, multiplicación, división y módulo, se pueden indicar paréntesis para cambiar la precedencia.
+Para multiplicar se puede usar * o x, para dividir se puede usar / o :.
 
 <br>
 
