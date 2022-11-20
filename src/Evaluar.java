@@ -17,7 +17,7 @@ import java.util.Arrays;
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
  * @author Guillermo Som (Guille), iniciado el 16/nov/2022
- * @version 1.1.1.*.221120
+ * @version 1.1.1.4.221120
  */
 public final class Evaluar {
     public static void main (String[] args) throws IOException {
@@ -151,18 +151,18 @@ public final class Evaluar {
      * Los operadores multiplicativos.
      * Se puede usar la x para multiplicar y los dos puntos para dividir.
      */
-    private static final String operadoresNivel1 = "x*:/%";
+    private static final String operadoresMultiplicativos = "x*:/%";
 
     /**
      * Los operadores aditivos.
      */
-    private static final String operadoresNivel2 = "+-";
+    private static final String operadoresAditivos = "+-";
 
     /**
      * Los operadores en el orden de precedencia.
      * Sin incluir los paréntesis que se procesan por separado.
      */
-    private static final String losOperadores = operadoresNivel1 + operadoresNivel2;
+    private static final String losOperadores = operadoresMultiplicativos + operadoresAditivos;
 
     /**
      * Array de tipo char con los operadores en el orden de precedencia.
@@ -253,7 +253,8 @@ public final class Evaluar {
             // O es un número negativo. (18/nov/22 16.27)
             // O hay una expresión a evaluar. (20/nov/22 09.23)
             if (donde.position == 0) {
-                if (expression.startsWith("-") || expression.startsWith("+")) {
+                // if (expression.startsWith("-") || expression.startsWith("+")) {
+                if (donde.operador == '-') {
                     // Comprobar si hay más operaciones. (20/nov/22 09.23)
                     cuantos = cuantosOperadores(expression);
                     if (cuantos == 1) {
@@ -295,7 +296,9 @@ public final class Evaluar {
             // op2 tendrá el resto de la expresión.
             op2 = expression.substring(donde.position + 1).trim();
             // Buscar el número hasta el siguiente operador.
-            op2 = buscarUnNumero(op2, false);
+            var op22 = buscarUnNumero(op2, false);
+            op2= op22;
+            //op2 = buscarUnNumero(op2, false);
             res2 = Double.parseDouble(op2);
 
             resultado = switch (donde.operador) {
@@ -438,7 +441,8 @@ public final class Evaluar {
      */
     private static int cuantosOperadores(String expression) {
         int cuantos = 0;
-        var copiaOperadores = operadores;
+        // Hacer una copia para que el original no se quede ordenado.
+        var copiaOperadores = Arrays.copyOf(operadores, operadores.length);
         Arrays.sort(copiaOperadores);
         for (char c : expression.toCharArray()) {
             int p = Arrays.binarySearch(copiaOperadores, c);
@@ -450,7 +454,7 @@ public final class Evaluar {
     }
 
     /**
-     * Comprueba si hay un solo operador, si lo hay devuelve un tuple con el carácter y la posición en la cadena.
+     * Comprueba si hay un solo operador, si lo hay devuelve un tuple con el carácter y la posición.
      * @param expression La expresión a evaluar.
      * @return Si solo hay un operador, devuelve un tuple con el operador y la posición,
      *         en otro caso devuelve '\u0000' y -1.
@@ -490,12 +494,12 @@ public final class Evaluar {
      */
     private static TuplePair<Character, Integer> siguienteOperadorConPrecedencia(String expression, int fromIndex) {
         // Buscar primero los de más precedencia
-        TuplePair<Character, Integer> posChar = firstIndexOfAny(expression, operadoresNivel1.toCharArray(), fromIndex);
+        TuplePair<Character, Integer> posChar = firstIndexOfAny(expression, operadoresMultiplicativos.toCharArray(), fromIndex);
         if (posChar != null) {
             return posChar;
         }
         // Después buscar en los de menos precedencia.
-        posChar = firstIndexOfAny(expression, operadoresNivel2.toCharArray(), fromIndex);
+        posChar = firstIndexOfAny(expression, operadoresAditivos.toCharArray(), fromIndex);
         return posChar;
     }
 
