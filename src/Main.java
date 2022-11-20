@@ -10,6 +10,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Main {
+
+    /**
+     * Si se debe mostrar el tiempo empleado al evaluar una expresión.
+     */
+    static boolean mostrarTiempoEmpleado = false;
+
     public static void main(String[] args) throws IOException {
         /*
           Si se deben mostrar las expresiones de ejemplo.
@@ -18,27 +24,6 @@ public class Main {
         String expression;
 
         Evaluar.mostrarParciales = true;
-
-        // Los colores para la consola.
-        //  El 3 en el segundo valor es para el texto
-        //  El 4 en el segundo valor es para el fondo.
-        /**
-         * Para indicar el color del texto o del fondo al mostrarlo por la consola.
-         */
-        final class ConsoleColor {
-            static final String black = "\033[30m";
-            static final String red = "\033[31m";
-            static final String redBack = "\033[41m";
-            static final String green = "\033[32m";
-            static final String greenBack = "\033[42m";
-            static final String yellow = "\033[33m";
-            static final String yellowBack = "\u001B[43m";
-            static final String blue = "\033[34m";
-            static final String purple = "\033[35m";
-            static final String cyan = "\033[36m";
-            static final String white = "\033[37m";
-            static final String reset = "\u001B[0m";
-        }
 
         String res;
 
@@ -49,7 +34,8 @@ public class Main {
             System.out.print(ConsoleColor.reset);
             System.out.println(ConsoleColor.green);
             System.out.println("Opciones:");
-            System.out.print(" Mostrar las operaciones parciales:");
+            //System.out.print(" Mostrar las operaciones parciales:");
+            System.out.print(" Mostrar el tiempo empleado al evaluar:");
             System.out.println("  1: Sí, 2: No");
             System.out.print(" Mostrar las expresiones de ejemplo:");
             System.out.println(" 3: Sí, 4: No");
@@ -57,8 +43,6 @@ public class Main {
             System.out.println("    5: Sí, 6: No (se usa una de prueba)");
             System.out.print(ConsoleColor.reset);
             System.out.print("Indica las opciones a usar, 0=salir (ej: 146) [145]: ");
-
-            //System.out.print("Mostrar las operaciones parciales? ([S|s] = sí, otro = no) ");
 
             // Con BufferedReader se puede pulsar INTRO,
             //  siempre que el out anterior no acabe en nueva línea??? (o eso me ha parecido).
@@ -76,7 +60,10 @@ public class Main {
                 return;
             }
 
-            Evaluar.mostrarParciales = res.contains("1");
+            // Solo se mostrará en la expresión indicada (no las de ejemplo).
+            Evaluar.mostrarParciales = true;
+
+            mostrarTiempoEmpleado = res.contains("1");
             mostrarEjemplos = res.contains("3");
 
             expression = "99-15+2*7";
@@ -162,6 +149,8 @@ public class Main {
                 Evaluar.mostrarParciales = mostrarParcialesAnt;
             }
 
+            //System.err.flush();
+            //System.out.println();
             System.out.print("\nPulsa INTRO para ir al menú (0 para terminar) ");
             res = in.readLine();
             System.out.println();
@@ -175,6 +164,7 @@ public class Main {
 
     /**
      * Mostrar el resultado de la expresión indicada.
+     *
      * @param expression La expresión a evaluar.
      */
     private static void mostrarResultado(String expression) {
@@ -185,6 +175,9 @@ public class Main {
         System.out.println(res);
         long elapsedTime = System.nanoTime() - startTime;
         //long elapsedTime = System.currentTimeMillis() - iniTime;
-        System.out.printf("  Tiempo empleado: %,.2f ns/1.000\n", (elapsedTime / 1000.0));
+        if (mostrarTiempoEmpleado) {
+            System.out.printf("  Tiempo empleado: %,.2f ns/1.000\n", (elapsedTime / 1000.0));
+        }
     }
 }
+
