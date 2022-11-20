@@ -66,7 +66,6 @@ public final class Evaluar {
             System.out.println();
         }
         expression = "1.5*3.0+12-(-15+5)*2 + 10%3";
-        expression = "(-15)";
         System.out.printf("Escribe una expresión a evaluar (0 para mostrar las pruebas) [%s] ", expression);
         res = in.readLine();
         //System.out.println();
@@ -175,7 +174,6 @@ public final class Evaluar {
      *
      * @param expression La expresión a evaluar.
      * @return El valor entero de la expresión evaluada.
-     * @version 1.1.1.1.221120
      */
     public static double evaluar(String expression) {
         if (expression == null) {
@@ -190,8 +188,6 @@ public final class Evaluar {
             return 0;
         }
 
-        double resultado;
-
         // Primero se evalúan todas las expresiones entre paréntesis.
         String res = evaluarParentesis(expression);
 
@@ -204,7 +200,6 @@ public final class Evaluar {
      * Se evalúan las operaciones (entre enteros) de suma (+), resta (-), multiplicación (*) y división (/).
      * @param expression La expresión a evaluar.
      * @return Un valor entero con el resultado de la expresión evaluada.
-     * @version 1.1.1.3.221120
      */
     private static double evaluarExp(String expression) {
         // Quitar todos los caracteres en blanco.
@@ -242,16 +237,17 @@ public final class Evaluar {
                 // También se puede usar return resultado;
                 break;
             }
-            else {
-                // Hay algún operador, comprobar si empieza por - y no hay más operadores.
-                if (donde.operador == '-') {
-                    cuantos = cuantosOperadores(expression);
-                    // Si solo está ese operador, devolver el valor.
-                    if (cuantos == 1) {
-                        return Double.parseDouble(expression);
-                    }
-                }
-            }
+//            else {
+//                // Hay algún operador, comprobar si empieza por - y no hay más operadores.
+//                if (donde.operador == '-') {
+//                    cuantos = cuantosOperadores(expression);
+//                    // Si solo está ese operador, devolver el valor.
+//                    // Si empieza por -.
+//                    if (cuantos == 1 && expression.startsWith(("-"))) {
+//                        return Double.parseDouble(expression);
+//                    }
+//                }
+//            }
 
             // Si la posición es cero es que delante no hay nada.
             // O es un número negativo. (18/nov/22 16.27)
@@ -259,8 +255,8 @@ public final class Evaluar {
             if (donde.position == 0) {
                 if (expression.startsWith("-") || expression.startsWith("+")) {
                     // Comprobar si hay más operaciones. (20/nov/22 09.23)
-                    int numOp = cuantosOperadores(expression);
-                    if (numOp == 1) {
+                    cuantos = cuantosOperadores(expression);
+                    if (cuantos == 1) {
                         return Double.parseDouble(expression);
                     }
                     // Desglosar la operación, teniendo en cuenta que el primero es negativo.
@@ -421,19 +417,19 @@ public final class Evaluar {
         return expression;
     }
 
-    /**
-     * Comprueba si la cadena indicada tiene alguno de los operadores aceptados.
-     * @param expression La cadena a comprobar.
-     * @return True si contiene algún operador, false en caso contrario.
-     */
-    private static boolean hayOperador(String expression) {
-        for (char c : operadores) {
-            if (expression.indexOf(c) > -1) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    /**
+//     * Comprueba si la cadena indicada tiene alguno de los operadores aceptados.
+//     * @param expression La cadena a comprobar.
+//     * @return True si contiene algún operador, false en caso contrario.
+//     */
+//    private static boolean hayOperador(String expression) {
+//        for (char c : operadores) {
+//            if (expression.indexOf(c) > -1) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     /**
      * Cuenta cuántos operadores hay en la expresión.
