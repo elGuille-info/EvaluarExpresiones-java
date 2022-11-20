@@ -2,7 +2,7 @@
  * Extensiones para las cadenas. (19/nov/22 04.13)
  *
  * @author Guillermo Som (Guille)
- * @version 1.0.0.0
+ * @version 1.0.0.1
  */
 public class StringExtend {
 
@@ -23,15 +23,27 @@ public class StringExtend {
     // Buscar en una cadena cualquiera de los caracteres indicados. (19/nov/22 03.58)
 
     /**
-     * Busca en la cadena cualquiera de los anyOf indicados.
+     * Busca en la cadena desde el principio cualquiera de los anyOf indicados.
      * @param expression La cadena a evaluar.
      * @param anyOf Los anyOf a comprobar en la cadena.
      * @return La posición en la cadena del primero que encuentre o -1 si no hay ninguno.
      */
     public static int indexOfAny(String expression, char[] anyOf) {
+        return indexOfAny(expression, anyOf, 0);
+    }
+
+    /**
+     * Busca en la cadena cualquiera de los anyOf indicados.
+     * @param expression La cadena a evaluar.
+     * @param anyOf Los anyOf a comprobar en la cadena.
+     * @param fromIndex El índice desde donde se comprobará.
+     * @return La posición en la cadena del primero que encuentre o -1 si no hay ninguno.
+     * @version 1.0.0.1
+     */
+    public static int indexOfAny(String expression, char[] anyOf, int fromIndex) {
         int pos;
         for (var c : anyOf) {
-            pos = expression.indexOf(c);
+            pos = expression.indexOf(c, fromIndex);
             if (pos > -1) {
                 return pos;
             }
@@ -40,16 +52,29 @@ public class StringExtend {
     }
 
     /**
-     * Busca en la cadena los caracteres indicados y devuelve la primera ocurrencia.
+     * Busca desde el principio de la cadena los caracteres indicados y devuelve la primera ocurrencia.
      * Si alguno de los caracteres está en la cadena, devuelve el que esté antes.
      * @param expression La cadena a evaluar.
      * @param anyOf Los caracteres a comprobar en la cadena.
      * @return La posición del primero que encuentre en la cadena o -1 si no hay ninguno.
      */
     public static int firstIndexOfAny(String expression, char[] anyOf) {
+        return firstIndexOfAny(expression, anyOf, 0);
+    }
+
+    /**
+     * Busca en la cadena los caracteres indicados y devuelve la primera ocurrencia.
+     * Si alguno de los caracteres está en la cadena, devuelve el que esté antes.
+     * @param expression La cadena a evaluar.
+     * @param anyOf Los caracteres a comprobar en la cadena.
+     * @param fromIndex El índice desde donde se comprobará.
+     * @return La posición del primero que encuentre en la cadena o -1 si no hay ninguno.
+     * @version 1.0.0.1
+     */
+    public static int firstIndexOfAny(String expression, char[] anyOf, int fromIndex) {
         int menor = -1;
         for (char c : anyOf) {
-            int pos = expression.indexOf(c);
+            int pos = expression.indexOf(c, fromIndex);
             if (pos > -1) {
                 if (menor == -1) {
                     menor = pos;
