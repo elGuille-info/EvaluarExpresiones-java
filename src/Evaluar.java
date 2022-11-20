@@ -16,8 +16,8 @@ import java.util.Arrays;
 /**
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
- * @author Guillermo Som (Guille), 16/nov/2022
- * @version 1.1.0.1
+ * @author Guillermo Som (Guille), iniciado el 16/nov/2022
+ * @version 1.1.1.0.221120
  */
 public final class Evaluar {
     public static void main (String[] args) throws IOException {
@@ -66,6 +66,7 @@ public final class Evaluar {
             System.out.println();
         }
         expression = "1.5*3.0+12-(-15+5)*2 + 10%3";
+        expression = "(-15)";
         System.out.printf("Escribe una expresión a evaluar (0 para mostrar las pruebas) [%s] ", expression);
         res = in.readLine();
         //System.out.println();
@@ -166,28 +167,28 @@ public final class Evaluar {
      *
      * @param expression La expresión a evaluar.
      * @return El valor entero de la expresión evaluada.
+     * @version 1.1.1.1.221120
      */
     public static double evaluar(String expression) {
-        if (expression == null || expression.trim().equals(""))
+        if (expression == null) {
+            System.err.println("La expresión a analizar es nula.");
             return -1;
+        }
 
         // Quitar todos los caracteres en blanco.
         expression = expression.replace(" ", "");
+        if (expression.equals("")) {
+            System.err.println("La expresión a analizar es una cadena vacía.");
+            return 0;
+        }
 
         double resultado;
 
         // Primero se evalúan todas las expresiones entre paréntesis.
-        var res = evaluarParentesis(expression);
+        String res = evaluarParentesis(expression);
 
-        // Si hay algún operador, evaluar la expresión.
-        if (hayOperador(res)) {
-            resultado = evaluarExp(res);
-        } else {
-            // Si no hay operadores, es que es el resultado.
-            resultado = Double.parseDouble(res);
-        }
-
-        return resultado;
+        // En evaluarExp se comprueba si hay operadores.
+        return evaluarExp(res);
     }
 
     /**
@@ -195,32 +196,60 @@ public final class Evaluar {
      * Se evalúan las operaciones (entre enteros) de suma (+), resta (-), multiplicación (*) y división (/).
      * @param expression La expresión a evaluar.
      * @return Un valor entero con el resultado de la expresión evaluada.
+     * @version 1.1.1.1.221120
      */
     private static double evaluarExp(String expression) {
-        // Si la expresión es nula o una cadena vacía, se devuelve cero.
-        if (expression == null || expression.trim().equals(""))
-            return 0;
-
         // Quitar todos los caracteres en blanco.
         expression = expression.replace(" ", "");
+        // Si la expresión es una cadena vacía, se devuelve cero.
+        if (expression.equals("")) {
+            return 0;
+        }
 
-        // Evaluar la expresión indicada.
+        int cuantos;
+//        // Si la expresión no tiene operadores o empieza por signo - y no contiene más operadores,
+//        // devolver el número.
+//        int cuantos = cuantosOperadores(expression);
+//        if (cuantos == 0 || expression.startsWith("-") && cuantos == 1) {
+//            return Double.parseDouble(expression);
+//        }
 
         String op1 = null, op2;
         double resultado = 0;
         TuplePair<Character, Integer> donde;
         int desde;
 
-        do {
+        while (true) {
+        //do {
+//            // Si la expresión no tiene operadores o empieza por signo - y no contiene más operadores,
+//            // devolver el número.
+//            cuantos = cuantosOperadores(expression);
+//            if (cuantos == 0 || expression.startsWith("-") && cuantos == 1) {
+//                return Double.parseDouble(expression);
+//            }
+
             desde = 0;
             // Buscar la operación a realizar.
             donde = siguienteOperadorConPrecedencia(expression, desde);
+            // Si no hay más operadores.
             if (donde == null) {
-                // si no hay operadores y op1 es null, evaluar la expresión.
+                // Si no hay operadores y op1 es null, evaluar la expresión.
                 if (op1 == null) {
+                    // También se puede usar return Double.parseDouble(expression);
                     resultado = Double.parseDouble(expression);
                 }
+                // También se puede usar return resultado;
                 break;
+            }
+            else {
+                // Hay algún operador, comprobar si empieza por - y no hay más operadores.
+                if (donde.operador == '-') {
+                    cuantos = cuantosOperadores(expression);
+                    // Si solo está ese operador, devolver el valor.
+                    if (cuantos == 1) {
+                        return Double.parseDouble(expression);
+                    }
+                }
             }
 
             // Si la posición es cero es que delante no hay nada.
@@ -315,7 +344,8 @@ public final class Evaluar {
             else {
                 expression = expression.substring(0,  posOp) + elResultado + expression.substring(posOp + laOperacion.length());
             }
-        } while (hayOperador(expression));
+            //hay = hayOperador(expression);
+        } //while (hayOperador(expression));
 
         return resultado;
     }
