@@ -76,7 +76,10 @@ public final class Evaluar {
                 System.out.printf("Con Java: %s = %s\n", expression, pruebaD);
             }
             mostrarParciales = true;
-            System.out.printf("Con Evaluar: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            //System.out.println(resD);
+
+            System.out.printf("Con Evaluar: %s = %f", expression, resD);
         }
         else {
             System.out.println();
@@ -135,9 +138,11 @@ public final class Evaluar {
             expression = "2 - (10.0 * 2) / 6";
             System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
             System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
         }
-        resD = Evaluar.evaluar(expression);
-        System.out.println(resD);
+//        resD = Evaluar.evaluar(expression);
+//        System.out.println(resD);
     }
 
     /**
@@ -302,7 +307,9 @@ public final class Evaluar {
 
             // Si se deben mostrar las operaciones parciales. (18/nov/22 15.08)
             if (mostrarParciales) {
-                System.err.printf("\t %s = %,.2f\n", laOperacion, resultado);
+                // Mostrar los valores parciales en otro color.
+                //System.err.printf("\t %s = %,.2f\n", laOperacion, resultado);
+                System.out.printf("%s\t %s = %,.2f\nT%s", ConsoleColor.cyan, laOperacion, resultado, ConsoleColor.reset);
             }
 
             // Cambiar por el resultado esta expresión. (18/nov/22 00.20)
