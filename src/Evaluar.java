@@ -15,156 +15,34 @@ import java.util.Arrays;
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
  * @author Guillermo Som (Guille), iniciado el 16/nov/2022
- * @version 1.1.2.1.221121
+ * @version 1.1.3.1.221121
  */
 public final class Evaluar {
     /*
+     Versión 1.1.3.1.221121
+        Ya evalúa bien las expresiones entre paréntesis.
+
+     Versión 1.1.3.0.221121
+        Si la expresión tiene un paréntesis de cierre seguido de un número o un paréntesis de apertura,
+            se considera una multiplicación. Por tanto, poner el signo * después del paréntesis de cierre.
+
+        Si la expresión tiene un paréntesis de apertura seguido de uno de cierre
+            agrega un signo de multiplicación: (exp1)(exp2) -> (exp1)*(exp2).
+
+        Esto no hacerlo:
+            Si la expresión completa está entre paréntesis, quitarlos.
+            Si tiene el de apertura y no el del final, quitar el de apertura y avisar.
+
      Versión 1.1.2.1.221121
-        Si la expresión completa está entre paréntesis, quitarlos.
-        Si tiene el de apertura y no el del final, quitar el de apertura y avisar.
+        Si los paréntesis no están balanceados, avisar y devolver -1.
+        @see 1.1.3.0.221121
+            Si la expresión completa está entre paréntesis, quitarlos.
+            Si tiene el de apertura y no el del final, quitar el de apertura y avisar.
 
      Versión 1.1.2.0.221120
         Si entre un número y una expresión entre paréntesis no hay signo de operación usar la multiplicación.
-        Poder indicar 2(3+1) y que se convierta en 2 * (3+1) o 25+(2(7*2)+2).
+            Poder indicar 2(3+1) y que se convierta en 2 * (3+1) o 25+(2(7*2)+2) -> 25+(2*(7*2)+2).
     */
-
-    public static void main (String[] args) throws IOException {
-        String hola;
-        String anyOf;
-        TuplePair<Character, Integer> pos;
-        String esta;
-        String res;
-        BufferedReader in;
-        final String vocales = "aeiou";
-        String expression;
-        double resD;
-        double pruebaD;
-
-        System.out.printf("Indica las letras a comprobar (0 para no comprobar cadenas) [%s]: ", vocales);
-        // Con BufferedReader se puede pulsar INTRO,
-        //  siempre que el out anterior no acabe en nueva línea??? (o eso me ha parecido).
-        in = new BufferedReader(
-                new InputStreamReader(System.in));
-        res = in.readLine();
-        if (!res.equals("0")) {
-            if (res.equals("")) {
-                res = "aeiou";
-            }
-            anyOf = res;
-
-            System.out.print("Indica la palabra para comprobar si tiene alguna de las letras indicadas [Hola]: ");
-            in = new BufferedReader(
-                    new InputStreamReader(System.in));
-            res = in.readLine();
-            if (res.equals("")) {
-                res = "Hola";
-            }
-            hola = res;
-            System.out.println();
-
-            pos = indexOfAny(hola, anyOf.toCharArray());
-            System.out.println("Usando indexOfAny:");
-            esta = pos.position > -1 ? "'" + pos.operador + "' está en la posición " + pos.position : "no está ninguno";
-            System.out.printf("En '%s' de los caracteres de %s %s\n", hola, anyOf, esta);
-
-            System.out.println("Usando firstIndexOfAny:");
-            pos = firstIndexOfAny(hola, anyOf.toCharArray(), 0);
-            esta = pos == null ? "no hay ninguno" : "'" + pos.operador + "' está en la posición " + pos.position;
-            System.out.printf("En '%s' de los caracteres de %s, %s\n", hola, anyOf, esta);
-            System.out.println();
-        }
-
-
-        //expression = "1.5*3.0+12-(-15+5)*2 + 10%3";
-        //expression = "2(3+1)";
-        //expression = "25+(2(7*2)+2)";
-        expression = "(25+(2(7*2)+2))";
-        System.out.printf("Escribe una expresión a evaluar (0 para mostrar las pruebas) [%s] ", expression);
-        res = in.readLine();
-        if (!res.equals("0")) {
-            if (!res.equals("")) {
-                expression = res;
-            }
-            if (expression.equals("1.5*3.0+12-(-15+5)*2 + 10%3")) {
-                pruebaD = 1.5 * 3.0 + 12 - (-15 + 5) * 2 + 10 % 3;
-                System.out.printf("Con Java: %s = %s\n", expression, pruebaD);
-            }
-            mostrarParciales = true;
-            resD = Evaluar.evaluar(expression);
-
-            // Mostrar 4 decimales (sin separador de miles).
-            System.out.printf("Con Evaluar: %s = %.4f", expression, resD);
-            System.out.println();
-        }
-        else {
-            System.out.println();
-            System.out.println("Pruebas operaciones (Java y Evaluar):");
-            expression = "25+(2*(7*2)+2)";
-            pruebaD = 25+(2*(7*2)+2);
-            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
-            expression = "25+(2(7*2)+2)";
-            System.out.printf("Evaluar dice: %s = ", expression);
-            resD = Evaluar.evaluar(expression);
-            System.out.println(resD);
-
-            expression = "1.5*3+12-(-15+5)*2 + 10%3";
-            pruebaD = 1.5*3+12-(-15+5)*2 + 10%3;
-            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
-            System.out.printf("Evaluar dice: %s = ", expression);
-            resD = Evaluar.evaluar(expression);
-            System.out.println(resD);
-
-            expression = "17 * ((12+5) * (7-2)) ";
-            pruebaD = 17 * ((12 + 5) * (7 - 2));
-            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
-            System.out.printf("Evaluar dice: %s = ", expression);
-            resD = Evaluar.evaluar(expression);
-            System.out.println(resD);
-
-            expression = "1+2*3+6";
-            pruebaD = 1 + 2 * 3 + 6;
-            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
-            System.out.printf("Evaluar dice: %s = ", expression);
-            resD = Evaluar.evaluar(expression);
-            System.out.println(resD);
-            expression = "99-15+2*7";
-            pruebaD = 99 - 15 + 2 * 7;
-            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
-            System.out.printf("Evaluar dice: %s = ", expression);
-            resD = Evaluar.evaluar(expression);
-            System.out.println(resD);
-
-            // 6^2 / 2(3) + 4 (6 ^ 2 es 6 OR 2)
-            pruebaD = 36.0 / 2 * (3) + 4;
-            expression = "36.0 / 2*(3) +4";
-            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
-            System.out.printf("Evaluar dice: %s = ", expression);
-            resD = Evaluar.evaluar(expression);
-            System.out.println(resD);
-            // 6/2(2+1)
-            pruebaD = 6.0 / 2 * (2 + 1);
-            expression = "6.0/2*(2+1)";
-            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
-            System.out.printf("Evaluar dice: %s = ", expression);
-            resD = Evaluar.evaluar(expression);
-            System.out.println(resD);
-            //mostrarParciales = true;
-            //6/(2(2+1))
-            pruebaD = 6.0 / (2 * (2 + 1));
-            expression = "6.0/(2*(2+1))";
-            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
-            System.out.printf("Evaluar dice: %s = ", expression);
-            resD = Evaluar.evaluar(expression);
-            System.out.println(resD);
-            // 2 – (10 x 2) / 6
-            pruebaD = 2 - (10.0 * 2) / 6;
-            expression = "2 - (10.0 * 2) / 6";
-            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
-            System.out.printf("Evaluar dice: %s = ", expression);
-            resD = Evaluar.evaluar(expression);
-            System.out.println(resD);
-        }
-    }
 
     /**
      * Si se deben mostrar los resultados parciales de la evaluación de la expresión.
@@ -218,21 +96,11 @@ public final class Evaluar {
 
         if (iniApertura > -1) {
             // Comprobar que haya los mismos paréntesis de apertura que de cierre.
-            if (!estanBalanceados(expression)) {
+            if (!balancedParenthesis(expression)) {
                 System.err.printf("Los paréntesis no están balanceados '%s'.\n", expression);
                 return -1;
             }
 
-            // Si empieza por un paréntesis, comprobar que finalize con uno,
-            // si es así, quitar los dos, si no, quitar el primero.
-            if (iniApertura == 0) {
-                int num = expression.length() - 1;
-                var fin = expression.charAt(num);
-                if (fin == ')') {
-                    num--;
-                }
-                expression = expression.substring(iniApertura + 1, num);
-            }
             // Antes de evaluar las expresiones entre paréntesis
             //  comprobar si hay paréntesis precedidos de dígitos.
             expression = comprobarDigitParenthesis(expression);
@@ -253,10 +121,11 @@ public final class Evaluar {
      *
      * @param expression La expresión a evaluar.
      * @return True si hay los mismos de apertura que de cierre, false en otro caso.
+     * @since 1.1.2.1
      */
-    static boolean estanBalanceados(String expression) {
-        int apertura = cuantosHay(expression, '(');
-        int cierre = cuantosHay(expression, ')');
+    static boolean balancedParenthesis(String expression) {
+        int apertura = cuantasVeces(expression, '(');
+        int cierre = cuantasVeces(expression, ')');
         return apertura == cierre;
     }
 
@@ -266,8 +135,9 @@ public final class Evaluar {
      * @param expression La expresión a evaluar.
      * @param character El carácter a comprobar.
      * @return El número de veces que está el carácter en la expresión.
+     * @since 1.1.2.1
      */
-    static int cuantosHay(String expression, char character) {
+    static int cuantasVeces(String expression, char character) {
         int total = 0;
         for (int i = 0; i < expression.length(); i++) {
             if (expression.charAt(i) == character) {
@@ -279,10 +149,13 @@ public final class Evaluar {
 
     /**
      * Comprobar si hay paréntesis de apertura precedido por un dígito.
-     * Si es así, cambiarlo por dígito * (.
+     *      Si es así, cambiarlo por dígito * (.
+     * O si hay un paréntesis de apertura precedido por uno de cierre.
+     *      Si es así, cambiarlo por )*(.
      *
      * @param expression La expresión a evaluar.
      * @return La expresión con el cambio realizado.
+     * @since 1.1.2.0
      */
     private static String comprobarDigitParenthesis(String expression) {
         int desde = 0;
@@ -292,11 +165,13 @@ public final class Evaluar {
             ini = expression.indexOf('(', desde);
             // Si no hay más paréntesis de apertura, salir.
             if (ini == -1) {
-                return expression;
+                //return expression;
+                break;
             }
             if (ini - 1 >= 0) {
                 char digit = expression.charAt(ini - 1);
-                if (Character.isDigit(digit)) {
+                // Si lo precede un dígito o un )
+                if (Character.isDigit(digit) || digit == ')') {
                     // Cambiar este paréntesis por *(
                     expression = expression.substring(0, ini) + "*" + expression.substring(ini);
                     ini++;
@@ -304,9 +179,37 @@ public final class Evaluar {
             }
             desde = ini + 1;
             if (desde > expression.length()) {
-                return expression;
+                //return expression;
+                break;
             }
         }
+        // Comprobar si hay paréntesis de cierre seguido de uno de apertura o de un dígito,
+        //  si es así, cambiarlo poner un * entre los dos.
+        desde = 0;
+        while (true) {
+            ini = expression.indexOf(')', desde);
+            // Si no hay más paréntesis de cierre, salir.
+            if (ini == -1) {
+                //return expression;
+                break;
+            }
+            if (ini + 1 < expression.length()) {
+                char digit = expression.charAt(ini + 1);
+                // Si lo sigue un dígito o (
+                if (Character.isDigit(digit) || digit == '(') {
+                    // Cambiar este paréntesis por )*
+                    expression = expression.substring(0, ini + 1) + "*" + expression.substring(ini + 1);
+                    ini++;
+                }
+            }
+            desde = ini + 1;
+            if (desde > expression.length()) {
+                //return expression;
+                break;
+            }
+        }
+
+        return expression;
     }
 
     /**
@@ -328,11 +231,17 @@ public final class Evaluar {
                 // Si hay paréntesis de cierre...
                 if (fin > -1) {
                     // Comprobar si hay otro de empiece antes del cierre.
-                    var ini2 = expression.indexOf('(', ini + 1);
-                    if (ini2 > -1 && ini2 < fin) {
-                        // Hay uno de apertura antes del de cierre, evaluar desde ahí.
-                        ini = ini2;
-                        //fin = expression.indexOf(')', ini);
+                    int ini2;
+                    // Repetir hasta encontrar la pareja del de cierre.
+                    while (true) {
+                        ini2 = expression.indexOf('(', ini + 1);
+                        if (ini2 > -1 && ini2 < fin) {
+                            // Hay uno de apertura antes del de cierre, evaluar desde ahí.
+                            ini = ini2;
+                        }
+                        else {
+                            break;
+                        }
                     }
                     // En Java, substring, es desde inicio inclusive hasta fin exclusive.
                     // En .NET es desde inicio con la cantidad de caracteres del segundo parámetro.
@@ -346,8 +255,6 @@ public final class Evaluar {
                     // Esto es seguro, ya que al estar entre paréntesis
                     //  las mismas expresiones tendrán los mismos resultados,
                     //  a diferencia de lo que ocurriría si no estuvieran entre paréntesis.
-//                    String laOperacion = "(" + exp + ")";
-//                    expression = expression.replace(laOperacion, String.valueOf(res));
                     expression = expression.replace("(" + exp + ")", String.valueOf(res));
                 }
             }
@@ -735,5 +642,145 @@ public final class Evaluar {
      * @param <T2> El tipo (por referencia) del segundo parámetro.
      */
     record TuplePair<T1, T2>(T1 operador, T2 position) {
+    }
+
+    public static void main (String[] args) throws IOException {
+        String hola;
+        String anyOf;
+        TuplePair<Character, Integer> pos;
+        String esta;
+        String res;
+        BufferedReader in;
+        final String vocales = "aeiou";
+        String expression;
+        double resD;
+        double pruebaD;
+
+        System.out.printf("Indica las letras a comprobar (0 para no comprobar cadenas) [%s]: ", vocales);
+        // Con BufferedReader se puede pulsar INTRO,
+        //  siempre que el out anterior no acabe en nueva línea??? (o eso me ha parecido).
+        in = new BufferedReader(
+                new InputStreamReader(System.in));
+        res = in.readLine();
+        if (!res.equals("0")) {
+            if (res.equals("")) {
+                res = "aeiou";
+            }
+            anyOf = res;
+
+            System.out.print("Indica la palabra para comprobar si tiene alguna de las letras indicadas [Hola]: ");
+            in = new BufferedReader(
+                    new InputStreamReader(System.in));
+            res = in.readLine();
+            if (res.equals("")) {
+                res = "Hola";
+            }
+            hola = res;
+            System.out.println();
+
+            pos = indexOfAny(hola, anyOf.toCharArray());
+            System.out.println("Usando indexOfAny:");
+            esta = pos.position > -1 ? "'" + pos.operador + "' está en la posición " + pos.position : "no está ninguno";
+            System.out.printf("En '%s' de los caracteres de %s %s\n", hola, anyOf, esta);
+
+            System.out.println("Usando firstIndexOfAny:");
+            pos = firstIndexOfAny(hola, anyOf.toCharArray(), 0);
+            esta = pos == null ? "no hay ninguno" : "'" + pos.operador + "' está en la posición " + pos.position;
+            System.out.printf("En '%s' de los caracteres de %s, %s\n", hola, anyOf, esta);
+            System.out.println();
+        }
+
+
+        //expression = "1.5*3.0+12-(-15+5)*2 + 10%3";
+        //expression = "2(3+1)";
+        //expression = "25+(2(7*2)+2)";
+        //expression = "(25+(2(7*2)+2))";
+        expression = "25+(2(7*2)2)";
+        expression = "(" + expression +")";
+        System.out.printf("Escribe una expresión a evaluar (0 para mostrar las pruebas) [%s] ", expression);
+        res = in.readLine();
+        if (!res.equals("0")) {
+            if (!res.equals("")) {
+                expression = res;
+            }
+            if (expression.equals("1.5*3.0+12-(-15+5)*2 + 10%3")) {
+                pruebaD = 1.5 * 3.0 + 12 - (-15 + 5) * 2 + 10 % 3;
+                System.out.printf("Con Java: %s = %s\n", expression, pruebaD);
+            }
+            mostrarParciales = true;
+            resD = Evaluar.evaluar(expression);
+
+            // Mostrar 4 decimales (sin separador de miles).
+            System.out.printf("Con Evaluar: %s = %.4f", expression, resD);
+            System.out.println();
+        }
+        else {
+            System.out.println();
+            System.out.println("Pruebas operaciones (Java y Evaluar):");
+            expression = "25+(2*(7*2)+2)";
+            pruebaD = 25+(2*(7*2)+2);
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            expression = "25+(2(7*2)+2)";
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+
+            expression = "1.5*3+12-(-15+5)*2 + 10%3";
+            pruebaD = 1.5*3+12-(-15+5)*2 + 10%3;
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+
+            expression = "17 * ((12+5) * (7-2)) ";
+            pruebaD = 17 * ((12 + 5) * (7 - 2));
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+
+            expression = "1+2*3+6";
+            pruebaD = 1 + 2 * 3 + 6;
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+            expression = "99-15+2*7";
+            pruebaD = 99 - 15 + 2 * 7;
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+
+            // 6^2 / 2(3) + 4 (6 ^ 2 es 6 OR 2)
+            pruebaD = 36.0 / 2 * (3) + 4;
+            expression = "36.0 / 2*(3) +4";
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+            // 6/2(2+1)
+            pruebaD = 6.0 / 2 * (2 + 1);
+            expression = "6.0/2*(2+1)";
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+            //mostrarParciales = true;
+            //6/(2(2+1))
+            pruebaD = 6.0 / (2 * (2 + 1));
+            expression = "6.0/(2*(2+1))";
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+            // 2 – (10 x 2) / 6
+            pruebaD = 2 - (10.0 * 2) / 6;
+            expression = "2 - (10.0 * 2) / 6";
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+        }
     }
 }
