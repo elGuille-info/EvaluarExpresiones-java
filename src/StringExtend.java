@@ -2,7 +2,7 @@
  * Extensiones para las cadenas. (19/nov/22 04.13)
  *
  * @author Guillermo Som (Guille)
- * @version 1.0.0.1
+ * @version 1.0.1.0
  */
 public class StringExtend {
 
@@ -18,6 +18,24 @@ public class StringExtend {
         System.out.println("Usando firstIndexOfAny:");
         pos = firstIndexOfAny(hola, anyOf.toCharArray());
         System.out.printf("En '%s' de los caracteres de %s, el primero está en la posición %d\n", hola, anyOf, pos);
+    }
+
+    /**
+     * Cuenta las veces que el carácter indicado está en la expresión.
+     *
+     * @param expression La expresión a evaluar.
+     * @param character El carácter a comprobar.
+     * @return El número de veces que está el carácter en la expresión.
+     * @since 1.0.1.0
+     */
+    public static int cuantasVeces(String expression, char character) {
+        int total = 0;
+        for (int i = 0; i < expression.length(); i++) {
+            if (expression.charAt(i) == character) {
+                total++;
+            }
+        }
+        return total;
     }
 
     // Buscar en una cadena cualquiera de los caracteres indicados. (19/nov/22 03.58)
@@ -38,7 +56,7 @@ public class StringExtend {
      * @param anyOf Los anyOf a comprobar en la cadena.
      * @param fromIndex El índice desde donde se comprobará.
      * @return La posición en la cadena del primero que encuentre o -1 si no hay ninguno.
-     * @version 1.0.0.1
+     * @since 1.0.0.1
      */
     public static int indexOfAny(String expression, char[] anyOf, int fromIndex) {
         int pos;
@@ -69,7 +87,7 @@ public class StringExtend {
      * @param anyOf Los caracteres a comprobar en la cadena.
      * @param fromIndex El índice desde donde se comprobará.
      * @return La posición del primero que encuentre en la cadena o -1 si no hay ninguno.
-     * @version 1.0.0.1
+     * @since 1.0.0.1
      */
     public static int firstIndexOfAny(String expression, char[] anyOf, int fromIndex) {
         int menor = -1;
