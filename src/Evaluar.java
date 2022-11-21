@@ -15,9 +15,19 @@ import java.util.Arrays;
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
  * @author Guillermo Som (Guille), iniciado el 16/nov/2022
- * @version 1.1.1.6.221120
+ * @version 1.1.2.1.221121
  */
 public final class Evaluar {
+    /*
+     Versión 1.1.2.1.221121
+        Si la expresión completa está entre paréntesis, quitarlos.
+        Si tiene el de apertura y no el del final, quitar el de apertura y avisar.
+
+     Versión 1.1.2.0.221120
+        Si entre un número y una expresión entre paréntesis no hay signo de operación usar la multiplicación.
+        Poder indicar 2(3+1) y que se convierta en 2 * (3+1) o 25+(2(7*2)+2).
+    */
+
     public static void main (String[] args) throws IOException {
         String hola;
         String anyOf;
@@ -63,7 +73,12 @@ public final class Evaluar {
             System.out.printf("En '%s' de los caracteres de %s, %s\n", hola, anyOf, esta);
             System.out.println();
         }
-        expression = "1.5*3.0+12-(-15+5)*2 + 10%3";
+
+
+        //expression = "1.5*3.0+12-(-15+5)*2 + 10%3";
+        //expression = "2(3+1)";
+        //expression = "25+(2(7*2)+2)";
+        expression = "(25+(2(7*2)+2))";
         System.out.printf("Escribe una expresión a evaluar (0 para mostrar las pruebas) [%s] ", expression);
         res = in.readLine();
         if (!res.equals("0")) {
@@ -77,11 +92,21 @@ public final class Evaluar {
             mostrarParciales = true;
             resD = Evaluar.evaluar(expression);
 
-            System.out.printf("Con Evaluar: %s = %f", expression, resD);
+            // Mostrar 4 decimales (sin separador de miles).
+            System.out.printf("Con Evaluar: %s = %.4f", expression, resD);
+            System.out.println();
         }
         else {
             System.out.println();
             System.out.println("Pruebas operaciones (Java y Evaluar):");
+            expression = "25+(2*(7*2)+2)";
+            pruebaD = 25+(2*(7*2)+2);
+            System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
+            expression = "25+(2(7*2)+2)";
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+
             expression = "1.5*3+12-(-15+5)*2 + 10%3";
             pruebaD = 1.5*3+12-(-15+5)*2 + 10%3;
             System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
@@ -187,11 +212,176 @@ public final class Evaluar {
             return 0;
         }
 
-        // Primero se evalúan todas las expresiones entre paréntesis.
-        String res = evaluarParentesis(expression);
+        // Comprobar si tenemos paréntesis. (21/nov/22 06.59)
+        int iniApertura = expression.indexOf('(');
+        String res;
+
+        if (iniApertura > -1) {
+            // Comprobar que haya los mismos paréntesis de apertura que de cierre.
+            if (!estanBalanceados(expression)) {
+                System.err.printf("Los paréntesis no están balanceados '%s'.\n", expression);
+                return -1;
+            }
+
+            // Si empieza por un paréntesis, comprobar que finalize con uno,
+            // si es así, quitar los dos, si no, quitar el primero.
+            if (iniApertura == 0) {
+                int num = expression.length() - 1;
+                var fin = expression.charAt(num);
+                if (fin == ')') {
+                    num--;
+                }
+                expression = expression.substring(iniApertura + 1, num);
+            }
+            // Antes de evaluar las expresiones entre paréntesis
+            //  comprobar si hay paréntesis precedidos de dígitos.
+            expression = comprobarDigitParenthesis(expression);
+
+            // Primero se evalúan todas las expresiones entre paréntesis.
+            res = evaluarParenthesis(expression);
+        }
+        else {
+            res = expression;
+        }
 
         // En evaluarExp se comprueba si hay operadores.
         return evaluarExp(res);
+    }
+
+    /**
+     * Comprueba si los paréntesis en la expresión están balanceados.
+     *
+     * @param expression La expresión a evaluar.
+     * @return True si hay los mismos de apertura que de cierre, false en otro caso.
+     */
+    static boolean estanBalanceados(String expression) {
+        int apertura = cuantosHay(expression, '(');
+        int cierre = cuantosHay(expression, ')');
+        return apertura == cierre;
+    }
+
+    /**
+     * Cuenta las veces que el carácter indicado está en la expresión.
+     *
+     * @param expression La expresión a evaluar.
+     * @param character El carácter a comprobar.
+     * @return El número de veces que está el carácter en la expresión.
+     */
+    static int cuantosHay(String expression, char character) {
+        int total = 0;
+        for (int i = 0; i < expression.length(); i++) {
+            if (expression.charAt(i) == character) {
+                total++;
+            }
+        }
+        return total;
+    }
+
+    /**
+     * Comprobar si hay paréntesis de apertura precedido por un dígito.
+     * Si es así, cambiarlo por dígito * (.
+     *
+     * @param expression La expresión a evaluar.
+     * @return La expresión con el cambio realizado.
+     */
+    private static String comprobarDigitParenthesis(String expression) {
+        int desde = 0;
+        int ini;
+
+        while (true) {
+            ini = expression.indexOf('(', desde);
+            // Si no hay más paréntesis de apertura, salir.
+            if (ini == -1) {
+                return expression;
+            }
+            if (ini - 1 >= 0) {
+                char digit = expression.charAt(ini - 1);
+                if (Character.isDigit(digit)) {
+                    // Cambiar este paréntesis por *(
+                    expression = expression.substring(0, ini) + "*" + expression.substring(ini);
+                    ini++;
+                }
+            }
+            desde = ini + 1;
+            if (desde > expression.length()) {
+                return expression;
+            }
+        }
+    }
+
+    /**
+     * Evalúa el contenido de las expresiones entre paréntesis.
+     * Se permite NÚMERO(EXPRESIÓN) que se convierte en NÚMERO*(EXPRESIÓN).
+     *
+     * @param expression Expresión a evaluar (puede tener o no paréntesis).
+     * @return La cadena sin los paréntesis y con lo que haya entre paréntesis ya evaluado.
+     */
+    private static String evaluarParenthesis(String expression) {
+        boolean hay;
+        do {
+            // Posición del paréntesis de apertura.
+            int ini = expression.indexOf('(');
+            // Si hay paréntesis de apertura...
+            if (ini > -1) {
+                // Posición del paréntesis de cierre.
+                int fin = expression.indexOf(')', ini);
+                // Si hay paréntesis de cierre...
+                if (fin > -1) {
+                    // Comprobar si hay otro de empiece antes del cierre.
+                    var ini2 = expression.indexOf('(', ini + 1);
+                    if (ini2 > -1 && ini2 < fin) {
+                        // Hay uno de apertura antes del de cierre, evaluar desde ahí.
+                        ini = ini2;
+                        //fin = expression.indexOf(')', ini);
+                    }
+                    // En Java, substring, es desde inicio inclusive hasta fin exclusive.
+                    // En .NET es desde inicio con la cantidad de caracteres del segundo parámetro.
+                    var exp = expression.substring(ini + 1, fin);
+                    // Evaluar el resultado de la expresión.
+                    double res = evaluarExp(exp);
+                    // Asignar el resultado a la expresión.
+                    //  Si hay varias expresiones (entre paréntesis) como la evaluada,
+                    //      se reemplazarán por el resultado.
+                    //
+                    // Esto es seguro, ya que al estar entre paréntesis
+                    //  las mismas expresiones tendrán los mismos resultados,
+                    //  a diferencia de lo que ocurriría si no estuvieran entre paréntesis.
+//                    String laOperacion = "(" + exp + ")";
+//                    expression = expression.replace(laOperacion, String.valueOf(res));
+                    expression = expression.replace("(" + exp + ")", String.valueOf(res));
+                }
+            }
+
+            // Aquí llegará se haya evaluado o no la expresión entre paréntesis.
+            // Si había alguna expresión entre paréntesis, se habrá evaluado, pero puede que haya más.
+
+            // Para no repetir la comprobación en caso de que no haya más paréntesis. (17/nov/22 14.10)
+            //      Nota: Esta optimización no es estrictamente necesaria, pero...
+            // Ya que, en el primer if se comprueba como mínimo si hay de apertura.
+            // Si lo hubiera, después se revisará si hay de cierre.
+            // Si no se cumplen los dos casos,
+            //  en el if del bloque else, como mínimo, se vuelve a evaluar si hay de apertura.
+            // Si no hay de apertura el primer if fallará y en el segundo solo se chequeará si hay de cierre.
+            boolean hayApertura = expression.indexOf('(') > -1;
+
+            // Si no hay más paréntesis, salir.
+            // Por seguridad, comprobar que estén los dos paréntesis.
+            // Si hay de apertura y cierre, continuar.
+            if (hayApertura && expression.indexOf(')') > -1) {
+                hay = true;
+            } else {
+                // Quitar los que hubiera (si no están emparejados).
+                if (hayApertura || expression.indexOf(')') > -1){
+                    expression = expression.replace("(", "").replace(")", "");
+                }
+                hay = false;
+            }
+
+            // Repetir si hay más expresiones entre paréntesis de apertura y cierre.
+            //  Si hay paréntesis y no están emparejados, no se comprueba nada más.
+        } while (hay);
+
+        return expression;
     }
 
     /**
@@ -305,7 +495,7 @@ public final class Evaluar {
             if (mostrarParciales) {
                 // Mostrar los valores parciales en otro color.
                 //System.err.printf("\t %s = %,.2f\n", laOperacion, resultado);
-                System.out.printf("%s\t %s = %,.2f\nT%s", ConsoleColor.cyan, laOperacion, resultado, ConsoleColor.reset);
+                System.out.printf("%s\t %s = %,.2f\n%s", ConsoleColor.cyan, laOperacion, resultado, ConsoleColor.reset);
             }
 
             // Cambiar por el resultado esta expresión. (18/nov/22 00.20)
@@ -339,77 +529,6 @@ public final class Evaluar {
 
         // Si no hay break en el bucle while, aquí no llegará nunca.
         //return resultado;
-    }
-
-    /**
-     * Evalúa el contenido de las expresiones entre paréntesis.
-     *
-     * @param expression Expresión a evaluar (puede tener o no paréntesis).
-     * @return La cadena sin los paréntesis y con lo que haya entre paréntesis ya evaluado.
-     */
-    private static String evaluarParentesis(String expression) {
-        boolean hay;
-        do {
-            // Posición del paréntesis de apertura.
-            int ini = expression.indexOf('(');
-            // Si hay paréntesis de apertura...
-            if (ini > -1) {
-                // Posición del paréntesis de cierre.
-                int fin = expression.indexOf(')', ini);
-                // Si hay paréntesis de cierre...
-                if (fin > -1) {
-                    // Comprobar si hay otro de empiece antes del cierre.
-                    var ini2 = expression.indexOf('(', ini + 1);
-                    if (ini2 > -1 && ini2 < fin) {
-                        // Hay uno de apertura antes del de cierre, evaluar desde ahí.
-                        ini = ini2;
-                    }
-                    // En Java, substring, es desde inicio inclusive hasta fin exclusive.
-                    // En .NET es desde inicio con la cantidad de caracteres del segundo parámetro.
-                    var exp = expression.substring(ini + 1, fin);
-                    // Evaluar el resultado de la expresión.
-                    double res = evaluarExp(exp);
-                    // Asignar el resultado a la expresión.
-                    //  Si hay varias expresiones (entre paréntesis) como la evaluada,
-                    //      se reemplazarán por el resultado.
-                    //
-                    // Esto es seguro, ya que al estar entre paréntesis
-                    //  las mismas expresiones tendrán los mismos resultados,
-                    //  a diferencia de lo que ocurriría si no estuvieran entre paréntesis.
-                    expression = expression.replace("(" + exp + ")", String.valueOf(res));
-                }
-            }
-
-            // Aquí llegará se haya evaluado o no la expresión entre paréntesis.
-            // Si había alguna expresión entre paréntesis, se habrá evaluado, pero puede que haya más.
-
-            // Para no repetir la comprobación en caso de que no haya más paréntesis. (17/nov/22 14.10)
-            //      Nota: Esta optimización no es estrictamente necesaria, pero...
-            // Ya que, en el primer if se comprueba como mínimo si hay de apertura.
-            // Si lo hubiera, después se revisará si hay de cierre.
-            // Si no se cumplen los dos casos,
-            //  en el if del bloque else, como mínimo, se vuelve a evaluar si hay de apertura.
-            // Si no hay de apertura el primer if fallará y en el segundo solo se chequeará si hay de cierre.
-            boolean hayApertura = expression.indexOf('(') > -1;
-
-            // Si no hay más paréntesis, salir.
-            // Por seguridad, comprobar que estén los dos paréntesis.
-            // Si hay de apertura y cierre, continuar.
-            if (hayApertura && expression.indexOf(')') > -1) {
-                hay = true;
-            } else {
-                // Quitar los que hubiera (si no están emparejados).
-                if (hayApertura || expression.indexOf(')') > -1){
-                    expression = expression.replace("(", "").replace(")", "");
-                }
-                hay = false;
-            }
-
-            // Repetir si hay más expresiones entre paréntesis de apertura y cierre.
-            //  Si hay paréntesis y no están emparejados, no se comprueba nada más.
-        } while (hay);
-
-        return expression;
     }
 
     /**
