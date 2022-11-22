@@ -18,6 +18,15 @@ Estoy usando el IDE [IntelliJ IDEA 2022.2.3 (Community Edition) de JetBrains](ht
 
 <br>
 
+## EvaluarExpresiones v1.1.2.* y v1.1.3.* del 21-nov-2022
+
+> **Lo nuevo:** <br>
+> Ahora evalúa bien los paréntesis con cualquier cantidad de niveles. <br>
+> Si hay un paréntesis de apertura precedido por un dígito o de un paréntesis de cierre, se considera una multiplicación y se pone el signo *.<br>
+> Si hay un paréntesis de cierre seguido de un dígito o de un paréntesis de apertura, se considera una multiplicación y se pone el signo *.<br>
+
+<br>
+
 ## EvaluarExpresiones v1.1.1.* del 20-nov-2022
 Detalles de lo que hace el evaluador de expresiones actualmente:
 
@@ -26,7 +35,7 @@ Salvo que surja algún error en otras expresiones diferentes a las comprobadas, 
 > **Lo que hace:**<br>
 > Evalúa expresiones entre paréntesis (con varios niveles de anidación).<br>
 > Evalúa primero los operadores multiplicativos (* y x para multiplicar, / y : para dividir y % para el módulo) y después los operadores aditivos (+ para sumar, - para restar).<br>
-> Las expresión pueden tener espacios, pero al evaluarla se quitan, por tanto: 1 5 * 2 se convierte en 15*2.<br>
+> La expresión pueden tener espacios, pero al evaluarla se quitan, por tanto: 1 5 * 2 se convierte en 15*2.<br>
 
 <br>
 Algunas de las expresiones comprobadas:
