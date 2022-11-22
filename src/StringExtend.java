@@ -113,12 +113,16 @@ public class StringExtend {
      */
     public static int firstIndexOfAny(String expression, char[] anyOf, int fromIndex) {
         int hallado = -1;
+        // Comprobar todos los caracteres de anyOf.
         for (char c : anyOf) {
+            // Buscar la posición de ese carácter en la cadena.
             int pos = expression.indexOf(c, fromIndex);
             if (pos > -1) {
+                // Si es el primero hallado, asignar la posición.
                 if (hallado == -1) {
                     hallado = pos;
                 }
+                // Si ya se había hallado alguno, comprobar si la posición es menor del que había.
                 else if (pos < hallado) {
                     hallado = pos;
                 }
@@ -148,18 +152,15 @@ public class StringExtend {
      * @return La posición del último carácter que encuentre en la cadena o -1 si no hay ninguno.
      */
     public static int lastIndexOfAny(String expression, char[] anyOf, int fromIndex) {
-        int hallado = -1;
         for (int i = expression.length() - 1; i >= fromIndex; i--) {
+            // Comprueba si el carácter examinado está en anyOf.
             for (char c : anyOf) {
+                // Si el carácter examinado es uno de los caracteres, devolver la posición.
                 if (c == expression.charAt(i)) {
-                    hallado = i;
-                    break;
+                    return i;
                 }
             }
-            if (hallado > -1) {
-                break;
-            }
         }
-        return hallado;
+        return -1;
     }
 }
