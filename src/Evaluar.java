@@ -590,24 +590,23 @@ public final class Evaluar {
         return sb.toString().trim();
     }
 
-    // Buscar en una cadena cualquiera de los caracteres indicados. (19/nov/22 03.58)
-
-    /**
-     * Busca en la cadena cualquiera de los caracteres indicados.
-     *
-     * @param expression La cadena a evaluar.
-     * @param anyOf Los caracteres a comprobar en la cadena.
-     * @return La posición y el carácter del primer carácter que encuentre o -1 si no hay ninguno.
-     */
-    private static TuplePair<Character, Integer> indexOfAny(String expression, char[] anyOf) {
-        for (char c : anyOf) {
-            int pos = expression.indexOf(c);
-            if (pos > -1) {
-                return new TuplePair<>(c, pos);
-            }
-        }
-        return new TuplePair<>('\u0000', -1);
-    }
+//    // Buscar en una cadena cualquiera de los caracteres indicados. (19/nov/22 03.58)
+//    /**
+//     * Busca en la cadena cualquiera de los caracteres indicados.
+//     *
+//     * @param expression La cadena a evaluar.
+//     * @param anyOf Los caracteres a comprobar en la cadena.
+//     * @return La posición y el carácter del primer carácter que encuentre o -1 si no hay ninguno.
+//     */
+//    private static TuplePair<Character, Integer> indexOfAny(String expression, char[] anyOf) {
+//        for (char c : anyOf) {
+//            int pos = expression.indexOf(c);
+//            if (pos > -1) {
+//                return new TuplePair<>(c, pos);
+//            }
+//        }
+//        return new TuplePair<>('\u0000', -1);
+//    }
 
     /**
      * Busca en la cadena los caracteres indicados y devuelve la primera ocurrencia.
@@ -648,7 +647,6 @@ public final class Evaluar {
         String hola;
         String anyOf;
         TuplePair<Character, Integer> pos;
-        String esta;
         String res;
         BufferedReader in;
         final String vocales = "aeiou";
@@ -669,25 +667,31 @@ public final class Evaluar {
             }
             anyOf = res;
 
-            System.out.print("Indica la palabra para comprobar si tiene alguna de las letras indicadas [Hola]: ");
+            hola = "Hola Radiola";
+            System.out.printf("Indica la palabra para comprobar si tiene alguna de las letras indicadas [%s]: ", hola);
             in = new BufferedReader(
                     new InputStreamReader(System.in));
             res = in.readLine();
             if (res.equals("")) {
-                res = "Hola";
+                res = hola;
             }
             hola = res;
             System.out.println();
 
-            pos = indexOfAny(hola, anyOf.toCharArray());
-            System.out.println("Usando indexOfAny:");
-            esta = pos.position > -1 ? "'" + pos.operador + "' está en la posición " + pos.position : "no está ninguno";
-            System.out.printf("En '%s' de los caracteres de %s %s\n", hola, anyOf, esta);
-
             System.out.println("Usando firstIndexOfAny:");
             pos = firstIndexOfAny(hola, anyOf.toCharArray(), 0);
-            esta = pos == null ? "no hay ninguno" : "'" + pos.operador + "' está en la posición " + pos.position;
-            System.out.printf("En '%s' de los caracteres de %s, %s\n", hola, anyOf, esta);
+            if (pos == null)
+            {
+                System.out.printf("En '%s' no está ninguno de los caracteres de '%s'.\n", hola, anyOf);
+            }
+            else
+            {
+                System.out.printf("En '%s' de los caracteres de '%s', el primero ('%s') está en la posición %d.\n", hola, anyOf, pos.operador, pos.position);
+            }
+
+            int veces = cuantasVeces(hola, 'a');
+            System.out.printf("En '%s' el carácter 'a' está %d veces.\n", hola, veces);
+
             System.out.println();
         }
 
