@@ -2,12 +2,12 @@
  * Extensiones para las cadenas. (19/nov/22 04.13)
  *
  * @author Guillermo Som (Guille)
- * @version 1.0.2.0 del 22-nov-2022
+ * @version 1.0.3.0 del 22-nov-2022
  */
 public class StringExtend {
 
     public static void main (String[] args) {
-        String hola = "Hola";
+        String hola = "Hola Radiola y Ole!";
         var anyOf = "aeiou";
         int pos = indexOfAny(hola, anyOf.toCharArray());
         System.out.println("Usando indexOfAny:");
@@ -36,6 +36,9 @@ public class StringExtend {
         else {
             System.out.printf("En '%s' de los caracteres de '%s', el último está en la posición %d.\n", hola, anyOf, pos);
         }
+        System.out.println();
+        pos = cuantasVeces(hola, 'a');
+        System.out.printf("En '%s' el carácter 'a' está %d veces.\n", hola, pos);
     }
 
     /**
@@ -109,24 +112,24 @@ public class StringExtend {
      * @return La posición del primer carácter que encuentre en la cadena o -1 si no hay ninguno.
      */
     public static int firstIndexOfAny(String expression, char[] anyOf, int fromIndex) {
-        int menor = -1;
+        int hallado = -1;
         for (char c : anyOf) {
             int pos = expression.indexOf(c, fromIndex);
             if (pos > -1) {
-                if (menor == -1) {
-                    menor = pos;
+                if (hallado == -1) {
+                    hallado = pos;
                 }
-                else if (menor > pos) {
-                    menor = pos;
+                else if (pos < hallado) {
+                    hallado = pos;
                 }
             }
         }
-        return menor;
+        return hallado;
     }
 
     /**
      * Busca desde el principio de la cadena cualquiera de los caracteres de anyOf
-     * y devuelve el que esté antes desde el final.
+     * y devuelve el que esté más cerca del final.
      *
      * @param expression La cadena a evaluar.
      * @param anyOf Los caracteres a comprobar en la cadena.
@@ -137,7 +140,7 @@ public class StringExtend {
     }
     /**
      * Busca desde la posición indicada de la cadena cualquiera de los caracteres de ofAny
-     * y devuelve el que esté antes desde el final.
+     * y devuelve el que esté más cerca del final.
      *
      * @param expression La cadena a evaluar.
      * @param anyOf Los caracteres a comprobar en la cadena.
@@ -145,18 +148,18 @@ public class StringExtend {
      * @return La posición del último carácter que encuentre en la cadena o -1 si no hay ninguno.
      */
     public static int lastIndexOfAny(String expression, char[] anyOf, int fromIndex) {
-        int menor = -1;
-        for (char c : anyOf) {
-            int pos = expression.indexOf(c, fromIndex);
-            if (pos > -1) {
-                if (menor == -1) {
-                    menor = pos;
-                }
-                else if (menor < pos) {
-                    menor = pos;
+        int hallado = -1;
+        for (int i = expression.length() - 1; i >= fromIndex; i--) {
+            for (char c : anyOf) {
+                if (c == expression.charAt(i)) {
+                    hallado = i;
+                    break;
                 }
             }
+            if (hallado > -1) {
+                break;
+            }
         }
-        return menor;
+        return hallado;
     }
 }
