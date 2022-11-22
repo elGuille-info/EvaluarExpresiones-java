@@ -662,6 +662,7 @@ public final class Evaluar {
         in = new BufferedReader(
                 new InputStreamReader(System.in));
         res = in.readLine();
+
         if (!res.equals("0")) {
             if (res.equals("")) {
                 res = "aeiou";
@@ -690,11 +691,6 @@ public final class Evaluar {
             System.out.println();
         }
 
-
-        //expression = "1.5*3.0+12-(-15+5)*2 + 10%3";
-        //expression = "2(3+1)";
-        //expression = "25+(2(7*2)+2)";
-        //expression = "(25+(2(7*2)+2))";
         expression = "25+(2(7*2)2)";
         expression = "(" + expression +")";
         System.out.printf("Escribe una expresión a evaluar (0 para mostrar las pruebas) [%s] ", expression);
