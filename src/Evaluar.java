@@ -15,10 +15,13 @@ import java.util.Arrays;
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
  * @author Guillermo Som (Guille), iniciado el 16/nov/2022
- * @version 1.1.3.1.221121
+ * @version 1.1.4.1.221122
  */
 public final class Evaluar {
     /*
+     Versión 1.1.4.0.221122
+        Evaluar el factorial usando NUM!.
+
      Versión 1.1.3.1.221121
         Ya evalúa bien las expresiones entre paréntesis.
 
@@ -590,24 +593,6 @@ public final class Evaluar {
         return sb.toString().trim();
     }
 
-//    // Buscar en una cadena cualquiera de los caracteres indicados. (19/nov/22 03.58)
-//    /**
-//     * Busca en la cadena cualquiera de los caracteres indicados.
-//     *
-//     * @param expression La cadena a evaluar.
-//     * @param anyOf Los caracteres a comprobar en la cadena.
-//     * @return La posición y el carácter del primer carácter que encuentre o -1 si no hay ninguno.
-//     */
-//    private static TuplePair<Character, Integer> indexOfAny(String expression, char[] anyOf) {
-//        for (char c : anyOf) {
-//            int pos = expression.indexOf(c);
-//            if (pos > -1) {
-//                return new TuplePair<>(c, pos);
-//            }
-//        }
-//        return new TuplePair<>('\u0000', -1);
-//    }
-
     /**
      * Busca en la cadena los caracteres indicados y devuelve la primera ocurrencia.
      * Si alguno de los caracteres está en la cadena, devuelve el que esté antes.
@@ -643,6 +628,43 @@ public final class Evaluar {
     record TuplePair<T1, T2>(T1 operador, T2 position) {
     }
 
+    /**
+     * Calcula el factorial del número indicado.<br>
+     * Se permiten decimales (números no naturales).<br>
+     * Si el número indicado es 142 o superior devuelve Infinity.
+     *
+     * @param n El número del que se quiere calcular el factorial.
+     * @return Un valor de tipo doble con el factorial del número indicado.
+     */
+    static double fact(double n) {
+        return gamma(n + 1);
+    }
+
+    /**
+     * La función Gamma es una función que extiende el concepto de factorial a los números complejos.
+     *      <a href="http://www.guiasdeapoyo.net/guias/cuart_mat_e/Funci%C3%B3n%20gamma.pdf">Fuente</a><br>
+     *  El código está adaptado de <a href="https://stackoverflow.com/a/15454784/14338047">esta respuesta de StackOverflow</a>
+     *
+     * @param z El número del que queremos saber el valor de la función gamma.
+     * @return Un valor de tipo doble.
+     */
+    static double gamma(double z) {
+        var g = 7;
+        double[] p = {0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7};
+
+        if (z < 0.5) return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
+        else {
+            z -= 1;
+
+            var x = p[0];
+            for (var i = 1; i < g + 2; i++)
+                x += p[i] / (z + i);
+
+            var t = z + g + 0.5;
+            return Math.sqrt(2 * Math.PI) * Math.pow(t, (z + 0.5)) * Math.exp(-t) * x;
+        }
+    }
+
     public static void main (String[] args) throws IOException {
         String hola;
         String anyOf;
@@ -651,8 +673,8 @@ public final class Evaluar {
         BufferedReader in;
         final String vocales = "aeiou";
         String expression;
-        double resD;
         double pruebaD;
+        double resD;
 
         System.out.printf("Indica las letras a comprobar (0 para no comprobar cadenas) [%s]: ", vocales);
         // Con BufferedReader se puede pulsar INTRO,
@@ -692,6 +714,13 @@ public final class Evaluar {
             int veces = cuantasVeces(hola, 'a');
             System.out.printf("En '%s' el carácter 'a' está %d veces.\n", hola, veces);
 
+            System.out.println();
+        }
+
+        System.out.print("¿Quieres ver las pruebas de las factoriales? (S para sí, otra para no) [S]: ");
+        res = in.readLine();
+        if (res.equals("") || res.equalsIgnoreCase("s")) {
+            pruebasFactorial();
             System.out.println();
         }
 
@@ -782,5 +811,39 @@ public final class Evaluar {
             resD = Evaluar.evaluar(expression);
             System.out.println(resD);
         }
+    }
+
+    private static void pruebasFactorial() {
+        double resD;
+        double pruebaD;
+
+        for (pruebaD = 90; pruebaD < 143; pruebaD += 3) {
+            resD = fact(pruebaD);
+            System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        }
+        pruebaD = 2.44;
+        resD = fact(pruebaD);
+        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        pruebaD = 1.44;
+        resD = fact(pruebaD);
+        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        pruebaD = 1.99;
+        resD = fact(pruebaD);
+        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        pruebaD = 5.5;
+        resD = fact(pruebaD);
+        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        pruebaD = 0.8;
+        resD = fact(pruebaD);
+        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        pruebaD = -2;
+        resD = fact(pruebaD);
+        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        pruebaD = -5.5;
+        resD = fact(pruebaD);
+        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        pruebaD = -1.99;
+        resD = fact(pruebaD);
+        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
     }
 }
