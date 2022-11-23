@@ -647,7 +647,7 @@ public final class Evaluar {
 
     /**
      * Calcula el factorial del número indicado.<br>
-     * Se permiten decimales (números no naturales).<br>
+     * Se permiten decimales y números negativos.<br>
      * Si el número indicado es 142 o superior devuelve Infinity.
      *
      * @param n El número del que se quiere calcular el factorial.
@@ -844,10 +844,19 @@ public final class Evaluar {
         double resD;
         double pruebaD;
 
-        for (pruebaD = 90; pruebaD < 143; pruebaD += 3) {
+        for (pruebaD = 91; pruebaD < 150; pruebaD += 1) {
             resD = fact(pruebaD);
             System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
         }
+        pruebaD = -1;
+        resD = fact(pruebaD);
+        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        pruebaD = -2;
+        resD = fact(pruebaD);
+        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        pruebaD = -3;
+        resD = fact(pruebaD);
+        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
         pruebaD = 2.44;
         resD = fact(pruebaD);
         System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
