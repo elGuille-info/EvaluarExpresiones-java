@@ -151,14 +151,6 @@ public class Main {
 
             //System.err.flush();
             System.out.println();
-//            System.out.print("\nPulsa INTRO para ir al menú (0 para terminar) ");
-//            res = in.readLine();
-//            System.out.println();
-//            if (res.equals("0")) {
-//                System.out.println("Se termina el programa.");
-//                return;
-//            }
-//            System.out.println("\n");
         }
     }
 
