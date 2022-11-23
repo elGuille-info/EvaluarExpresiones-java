@@ -20,8 +20,11 @@ import java.util.Arrays;
  */
 public final class Evaluar {
     /*
+     Versión 1.1.5.*.221123
+        No se calculan las factoriales de números enteros negativos.
+
      Versión 1.1.4.*.221122
-        Evaluar el factorial usando NUM!.
+        Evaluar la factorial usando NUM!.
         La factorial a evaluar puede estar entre paréntesis.
 
      Versión 1.1.3.1.221121
@@ -646,22 +649,38 @@ public final class Evaluar {
     }
 
     /**
-     * Calcula el factorial del número indicado.<br>
-     * Se permiten decimales y números negativos.<br>
-     * Si el número indicado es 142 o superior devuelve Infinity.
+     * Calcula la factorial del número indicado.<br>
+     * Se permiten decimales y números negativos (que no sean números enteros).<br>
+     * Si el número indicado es 142 o superior devuelve Infinity.<br><br>
+     * <b>NOTAS:</b<br>
+     * Las comprobaciones de los valores obtenidos con los números no naturales (enteros mayores de cero) las he hecho con la calculadora (en modo científico) de Windows.<br>
+     * Esta calculadora no admite el cálculo de factoriales de números negativos enteros, pero sí de factoriales de números negativos con decimales.<br>
+     * Aun así, el programa calcula todos los números que se le indiquen.<br>
+     * Aclaración: Puede que no todos los valores devueltos sean correctos.
      *
-     * @param n El número del que se quiere calcular el factorial.
-     * @return Un valor de tipo doble con el factorial del número indicado.
+     * @param n El número del que se quiere calcular la factorial.
+     * @return Un valor de tipo doble con la factorial del número indicado.
      * @since 1.1.4.0
      */
     public static double fact(double n) {
+        // Comprobar si n es un entero negativo sin decimales.
+        if (n < 0) {
+            double number = Math.abs(n);
+            double fPart = number - (long) number;
+            if (fPart == 0) {
+                System.out.printf("%s\tError en factorial de %s (entero negativo).\n%s",
+                        ConsoleColor.red, n, ConsoleColor.reset);
+                return 0;
+            }
+        }
         return gamma(n + 1);
     }
 
     /**
      * La función Gamma es una función que extiende el concepto de factorial a los números complejos.
      *      <a href="http://www.guiasdeapoyo.net/guias/cuart_mat_e/Funci%C3%B3n%20gamma.pdf">Fuente</a><br>
-     *  El código está adaptado de <a href="https://stackoverflow.com/a/15454784/14338047">esta respuesta de StackOverflow</a>
+     *  El código está adaptado de <a href="https://stackoverflow.com/a/15454784/14338047">esta respuesta de StackOverflow</a><br>
+     *  No se calculan las factoriales de números enteros negativos.
      *
      * @param z El número del que queremos saber el valor de la función gamma.
      * @return Un valor de tipo doble.
@@ -676,7 +695,7 @@ public final class Evaluar {
             z -= 1;
 
             var x = p[0];
-            for (var i = 1; i < g + 2; i++)
+            for (int i = 1; i < g + 2; i++)
                 x += p[i] / (z + i);
 
             var t = z + g + 0.5;
@@ -733,13 +752,6 @@ public final class Evaluar {
             int veces = cuantasVeces(hola, 'a');
             System.out.printf("En '%s' el carácter 'a' está %d veces.\n", hola, veces);
 
-            System.out.println();
-        }
-
-        System.out.print("¿Quieres ver las pruebas de las factoriales? (S para sí, otra para no) [S]: ");
-        res = in.readLine();
-        if (res.equals("") || res.equalsIgnoreCase("s")) {
-            pruebasFactorial();
             System.out.println();
         }
 
@@ -835,6 +847,13 @@ public final class Evaluar {
             resD = Evaluar.evaluar(expression);
             System.out.println(resD);
         }
+
+        System.out.print("¿Quieres ver las pruebas de las factoriales? (S para sí, otra para no) [S]: ");
+        res = in.readLine();
+        if (res.equals("") || res.equalsIgnoreCase("s")) {
+            pruebasFactorial();
+            System.out.println();
+        }
     }
 
     /**
@@ -844,42 +863,46 @@ public final class Evaluar {
         double resD;
         double pruebaD;
 
-        for (pruebaD = 91; pruebaD < 150; pruebaD += 1) {
+        System.out.println("\nFactoriales con números mayor de 90:");
+        // Valores altos, hasta que da Infinity (142)
+        for (pruebaD = 91; pruebaD < 146; pruebaD += 3) {
             resD = fact(pruebaD);
-            System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+            System.out.printf("La factorial  de %.0f es %,.0f\n", pruebaD, resD);
         }
-        pruebaD = -1;
-        resD = fact(pruebaD);
-        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
-        pruebaD = -2;
-        resD = fact(pruebaD);
-        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
-        pruebaD = -3;
-        resD = fact(pruebaD);
-        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        System.out.println("\nFactoriales del -2 al 10:");
+        // Valores de -2 a 10
+        for (pruebaD = -2; pruebaD < 11; pruebaD++) {
+            resD = fact(pruebaD);
+            System.out.printf("La factorial  de %.0f es %,.0f\n", pruebaD, resD);
+        }
+        System.out.println("\nFactoriales con números con decimales:");
         pruebaD = 2.44;
         resD = fact(pruebaD);
-        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        System.out.printf("La factorial  de %.2f es %,.10f\n", pruebaD, resD);
         pruebaD = 1.44;
         resD = fact(pruebaD);
-        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        System.out.printf("La factorial  de %.2f es %,.10f\n", pruebaD, resD);
         pruebaD = 1.99;
         resD = fact(pruebaD);
-        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        System.out.printf("La factorial  de %.2f es %,.10f\n", pruebaD, resD);
         pruebaD = 5.5;
         resD = fact(pruebaD);
-        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        System.out.printf("La factorial  de %.2f es %,.10f\n", pruebaD, resD);
         pruebaD = 0.8;
         resD = fact(pruebaD);
-        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
-        pruebaD = -2;
+        System.out.printf("La factorial  de %.2f es %,.10f\n", pruebaD, resD);
+        System.out.println("\nFactoriales con números negativos:");
+        pruebaD = -0.8;
         resD = fact(pruebaD);
-        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        System.out.printf("La factorial  de %.2f es %,.10f\n", pruebaD, resD);
         pruebaD = -5.5;
         resD = fact(pruebaD);
-        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        System.out.printf("La factorial  de %.2f es %,.10f\n", pruebaD, resD);
         pruebaD = -1.99;
         resD = fact(pruebaD);
-        System.out.printf("El factorial  de %.2f es %.6f\n", pruebaD, resD);
+        System.out.printf("La factorial  de %.2f es %,.10f\n", pruebaD, resD);
+        pruebaD = -1.44;
+        resD = fact(pruebaD);
+        System.out.printf("La factorial  de %.2f es %,.10f\n", pruebaD, resD);
     }
 }
