@@ -3,6 +3,7 @@
 // Las expresiones entre paréntesis se evalúan primero.
 //
 // También se puede usar 'x' para multiplicar y ':' para dividir.
+// Se puede indicar '!', para calcular la factorial.
 
 //package com.example.evaluar;
 
@@ -15,12 +16,13 @@ import java.util.Arrays;
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
  * @author Guillermo Som (Guille), iniciado el 16/nov/2022
- * @version 1.1.4.1.221122
+ * @version 1.1.4.2.221123
  */
 public final class Evaluar {
     /*
-     Versión 1.1.4.0.221122
+     Versión 1.1.4.*.221122
         Evaluar el factorial usando NUM!.
+        La factorial a evaluar puede estar entre paréntesis.
 
      Versión 1.1.3.1.221121
         Ya evalúa bien las expresiones entre paréntesis.
@@ -126,7 +128,7 @@ public final class Evaluar {
      * @return True si hay los mismos de apertura que de cierre, false en otro caso.
      * @since 1.1.2.1
      */
-    static boolean balancedParenthesis(String expression) {
+    public static boolean balancedParenthesis(String expression) {
         int apertura = cuantasVeces(expression, '(');
         int cierre = cuantasVeces(expression, ')');
         return apertura == cierre;
@@ -140,7 +142,7 @@ public final class Evaluar {
      * @return El número de veces que está el carácter en la expresión.
      * @since 1.1.2.1
      */
-    static int cuantasVeces(String expression, char character) {
+    public static int cuantasVeces(String expression, char character) {
         int total = 0;
         for (int i = 0; i < expression.length(); i++) {
             if (expression.charAt(i) == character) {
@@ -152,7 +154,7 @@ public final class Evaluar {
 
     /**
      * Comprobar si hay paréntesis de apertura precedido por un dígito.
-     *      Si es así, cambiarlo por dígito * (.
+     *      Si es así, cambiarlo por dígito * (.<br>
      * O si hay un paréntesis de apertura precedido por uno de cierre.
      *      Si es así, cambiarlo por )*(.
      *
@@ -216,7 +218,7 @@ public final class Evaluar {
     }
 
     /**
-     * Evalúa el contenido de las expresiones entre paréntesis.
+     * Evalúa el contenido de las expresiones entre paréntesis.<br>
      * Se permite NÚMERO(EXPRESIÓN) que se convierte en NÚMERO*(EXPRESIÓN).
      *
      * @param expression Expresión a evaluar (puede tener o no paréntesis).
@@ -258,7 +260,7 @@ public final class Evaluar {
                     // Esto es seguro, ya que al estar entre paréntesis
                     //  las mismas expresiones tendrán los mismos resultados,
                     //  a diferencia de lo que ocurriría si no estuvieran entre paréntesis.
-                    expression = expression.replace("(" + exp + ")", String.valueOf(res));
+                    expression = expression.replace("(" + exp + ")", Double.toString(res));
                 }
             }
 
@@ -295,8 +297,8 @@ public final class Evaluar {
     }
 
     /**
-     * Evalúa la expresión indicada quitando los espacios en blanco, (no hay expresiones entre paréntesis).
-     * Se evalúan las operaciones (entre dobles) de suma, resta, multiplicación y división.
+     * Evalúa la expresión indicada quitando los espacios en blanco, (no hay expresiones entre paréntesis).<br>
+     * Se evalúan las operaciones (entre dobles) de factorial, suma, resta, multiplicación y división.
      *
      * @param expression La expresión a evaluar.
      * @return Un valor doble con el resultado de la expresión evaluada.
@@ -308,7 +310,6 @@ public final class Evaluar {
         if (expression.equals("")) {
             return 0;
         }
-
         int cuantos;
         String op1 = null, op2;
         // Para que tenga un valor asignado,
@@ -316,6 +317,24 @@ public final class Evaluar {
         double resultado = -1;
         TuplePair<Character, Integer> donde;
         int desde;
+        double res1, res2;
+
+        while (true) {
+            // Comprobar si se ha indicado el signo de factorial ! (23/nov/22 14.18)
+            desde = expression.indexOf('!');
+            if (desde > -1) {
+                op1 = expression.substring(0, desde);
+                op1 = buscarUnNumero(op1, true);
+                res1 = Double.parseDouble(op1);
+                res2 = fact(res1);
+                expression = expression.replace(op1 + "!", Double.toString(res2));
+                // Esto convierte el número usando los decimales "locales".
+                //expression = expression.replace(op1 + "!", String.format("%.4f", res2));
+            }
+            else {
+                break;
+            }
+        }
 
         while (true) {
             desde = 0;
@@ -374,8 +393,6 @@ public final class Evaluar {
                 }
             }
 
-            double res1, res2;
-
             // Asignar todos los caracteres hasta el signo al primer operador.
             op1 = expression.substring(desde, donde.position).trim();
             // La variable op1 puede tener la expresión 16.5--20.0 y al convertirla a doble falla.
@@ -399,7 +416,7 @@ public final class Evaluar {
                 default -> 0;
             };
             var laOperacion = op1 + donde.operador + op2;
-            var elResultado = String.valueOf(resultado);
+            var elResultado = Double.toString(resultado);
 
             // Si se deben mostrar las operaciones parciales. (18/nov/22 15.08)
             if (mostrarParciales) {
@@ -519,7 +536,7 @@ public final class Evaluar {
      * @param expression  La expresión a evaluar.
      * @param elAnterior True si se busca el número anterior (desde el final),
      *                   en otro caso se busca el número siguiente (desde el principio).
-     * @return La cadena con el número hallado.
+     * @return La cadena con el número hallado.<br>
      *         Si el número hallado lo precede - y delante hay otro operador es que es un número negativo.
      */
     private static String buscarUnNumero(String expression, boolean elAnterior) {
@@ -635,8 +652,9 @@ public final class Evaluar {
      *
      * @param n El número del que se quiere calcular el factorial.
      * @return Un valor de tipo doble con el factorial del número indicado.
+     * @since 1.1.4.0
      */
-    static double fact(double n) {
+    public static double fact(double n) {
         return gamma(n + 1);
     }
 
@@ -647,8 +665,9 @@ public final class Evaluar {
      *
      * @param z El número del que queremos saber el valor de la función gamma.
      * @return Un valor de tipo doble.
+     * @since 1.1.4.0
      */
-    static double gamma(double z) {
+    private static double gamma(double z) {
         var g = 7;
         double[] p = {0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7};
 
@@ -724,17 +743,12 @@ public final class Evaluar {
             System.out.println();
         }
 
-        expression = "25+(2(7*2)2)";
-        expression = "(" + expression +")";
+        expression = "25+((2+3)!*2)";
         System.out.printf("Escribe una expresión a evaluar (0 para mostrar las pruebas) [%s] ", expression);
         res = in.readLine();
         if (!res.equals("0")) {
             if (!res.equals("")) {
                 expression = res;
-            }
-            if (expression.equals("1.5*3.0+12-(-15+5)*2 + 10%3")) {
-                pruebaD = 1.5 * 3.0 + 12 - (-15 + 5) * 2 + 10 % 3;
-                System.out.printf("Con Java: %s = %s\n", expression, pruebaD);
             }
             mostrarParciales = true;
             resD = Evaluar.evaluar(expression);
@@ -746,10 +760,20 @@ public final class Evaluar {
         else {
             System.out.println();
             System.out.println("Pruebas operaciones (Java y Evaluar):");
+            expression = "25+(5!*2)";
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+
             expression = "25+(2*(7*2)+2)";
             pruebaD = 25+(2*(7*2)+2);
             System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
             expression = "25+(2(7*2)+2)";
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+
+            expression = "(" + expression +")";
             System.out.printf("Evaluar dice: %s = ", expression);
             resD = Evaluar.evaluar(expression);
             System.out.println(resD);
@@ -813,6 +837,9 @@ public final class Evaluar {
         }
     }
 
+    /**
+     * Pruebas de factoriales, con y sin decimales, números positivos y negativos.
+     */
     private static void pruebasFactorial() {
         double resD;
         double pruebaD;
