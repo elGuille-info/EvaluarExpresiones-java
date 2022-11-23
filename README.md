@@ -2,7 +2,8 @@
 Ejemplo de evaluar expresiones usando código de Java.
 
 Evalúa expresiones simples de suma, resta, multiplicación, división y módulo, se pueden indicar paréntesis para cambiar la precedencia.
-Para multiplicar se puede usar * o x, para dividir se puede usar / o :.
+Para multiplicar se puede usar '*' o 'x', para dividir se puede usar '/' o ':'.
+Se permite calcular factoriales indicando el carácter '!'.
 
 <br>
 
@@ -18,6 +19,20 @@ Para multiplicar se puede usar * o x, para dividir se puede usar / o :.
 <br>
 
 Estoy usando el IDE [IntelliJ IDEA 2022.2.3 (Community Edition) de JetBrains](https://www.jetbrains.com/idea/whatsnew/) usando el SDK [openjdk-19 de Oracle](https://www.oracle.com/java/technologies/javase/jdk19-archive-downloads.html) instalado automáticamente por el IDE al usar características no incluidas en el que tenía instalado (versión 11.0.12).
+
+<br>
+
+## EvaluarExpresiones v1.2.4.* del 23-nov-2022
+
+Evalúa factoriales, tanto de números enteros positivos (naturales) como números negativos con o sin parte decimal.<br>
+El valor del factorial se calcula usando [la función gamma](http://www.guiasdeapoyo.net/guias/cuart_mat_e/Funci%C3%B3n%20gamma.pdf) basada en un código adaptado de este [ejemplo de StackOverflow](https://stackoverflow.com/a/15454784/14338047).<br>
+Los valores se utilizan como _double_, los valores superiores a 141 (y -1) dan como resultado _Infinity_.<br>
+
+> **NOTA:**<br>
+> Las comprobaciones de los valores obtenidos con los números no naturales (enteros mayores de cero) las he hecho con la calculadora (en modo científico) de Windows.<br>
+> Esta calculadora no admite el cálculo de factoriales de números negativos enteros, pero sí de factoriales de números negativos con decimales.<br>
+> Aún así, el programa calcula todos los números que se le indiquen.<br>
+> Aclaro por tanto, puede que no todos los valores devueltos sean correctos.<br>
 
 <br>
 
