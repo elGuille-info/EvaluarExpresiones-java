@@ -36,7 +36,7 @@ El valor de la factorial se calcula usando [la función gamma](http://www.guiasd
 
 <br>
 
-## EvaluarExpresiones v1.2.4.* del 23-nov-2022
+## EvaluarExpresiones v1.1.4.* del 23-nov-2022
 
 Evalúa factoriales, tanto de números enteros positivos (naturales) como números negativos con o sin parte decimal.<br>
 El valor del factorial se calcula usando [la función gamma](http://www.guiasdeapoyo.net/guias/cuart_mat_e/Funci%C3%B3n%20gamma.pdf) basada en un código adaptado de este [ejemplo de StackOverflow](https://stackoverflow.com/a/15454784/14338047).<br>
