@@ -22,7 +22,21 @@ Estoy usando el IDE [IntelliJ IDEA 2022.2.3 (Community Edition) de JetBrains](ht
 
 <br>
 
-## EvaluarExpresiones v1.2.4.* del 23-nov-2022
+## EvaluarExpresiones v1.1.5.* del 24-nov-2022
+
+Evalúa factoriales, tanto de números enteros positivos (naturales) como números con parte decimal (positivos o negativos).<br>
+No se evalúan los números enteros negativos, en esos casos, devuelve 1 y muestra mensaje de error.<br>
+El valor de la factorial se calcula usando [la función gamma](http://www.guiasdeapoyo.net/guias/cuart_mat_e/Funci%C3%B3n%20gamma.pdf) basada en un código adaptado de este [ejemplo de StackOverflow](https://stackoverflow.com/a/15454784/14338047).<br>
+
+<br>
+
+> **NOTA:**<br>
+> Las comprobaciones de los valores obtenidos con los números no naturales (enteros mayores de cero) las he hecho con la calculadora (en modo científico) de Windows.<br>
+> Esta calculadora no admite el cálculo de factoriales de números negativos enteros, pero sí de factoriales de números negativos con decimales.<br>
+
+<br>
+
+## EvaluarExpresiones v1.1.4.* del 23-nov-2022
 
 Evalúa factoriales, tanto de números enteros positivos (naturales) como números negativos con o sin parte decimal.<br>
 El valor del factorial se calcula usando [la función gamma](http://www.guiasdeapoyo.net/guias/cuart_mat_e/Funci%C3%B3n%20gamma.pdf) basada en un código adaptado de este [ejemplo de StackOverflow](https://stackoverflow.com/a/15454784/14338047).<br>
