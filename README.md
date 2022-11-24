@@ -22,7 +22,7 @@ Estoy usando el IDE [IntelliJ IDEA 2022.2.3 (Community Edition) de JetBrains](ht
 
 <br>
 
-# EvaluarExpresiones v1.1.5.* del 24-nov-2022
+## EvaluarExpresiones v1.1.5.* del 24-nov-2022
 
 Evalúa factoriales, tanto de números enteros positivos (naturales) como números con parte decimal (positivos o negativos).<br>
 No se evalúan los números enteros negativos, en esos casos, devuelve 1 y muestra mensaje de error.<br>
