@@ -16,7 +16,7 @@ import java.util.Arrays;
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
  * @author Guillermo Som (Guille), iniciado el 16/nov/2022
- * @version 1.1.5.1.221124
+ * @version 1.1.5.2.221124
  */
 public final class Evaluar {
     /*
@@ -315,7 +315,7 @@ public final class Evaluar {
             return 0;
         }
         int cuantos;
-        String op1 = null, op2;
+        String op2;
         // Para que tenga un valor asignado,
         //  antes del return resultado del final ya estará asignada correctamente.
         double resultado = -1;
@@ -326,19 +326,20 @@ public final class Evaluar {
         while (true) {
             // Comprobar si se ha indicado el signo de factorial ! (23/nov/22 14.18)
             desde = expression.indexOf('!');
-            if (desde > -1) {
-                op1 = expression.substring(0, desde);
-                op1 = buscarUnNumero(op1, true);
-                res1 = Double.parseDouble(op1);
-                res2 = fact(res1);
-                expression = expression.replace(op1 + "!", Double.toString(res2));
-                // Esto convierte el número usando los decimales "locales".
-                //expression = expression.replace(op1 + "!", String.format("%.4f", res2));
-            }
-            else {
+            if (desde == -1) {
                 break;
             }
+            // No usar op1 aquí, (24/nov/22 03.40)
+            // debe mantener el valor null hasta el siguiente bloque while.
+            op2 = expression.substring(0, desde);
+            op2 = buscarUnNumero(op2, true);
+            res1 = Double.parseDouble(op2);
+            res2 = fact(res1);
+            expression = expression.replace(op2 + "!", Double.toString(res2));
         }
+
+        // Para asegurarme que no use op1 antes de este bucle while.
+        String op1 = null;
 
         while (true) {
             desde = 0;
@@ -672,7 +673,7 @@ public final class Evaluar {
             double numAbs = Math.abs(number);
             double fPart = numAbs - (long) numAbs;
             if (fPart == 0) {
-                System.out.printf("%s\tError en factorial de %s (entero negativo).\n%s",
+                System.out.printf("%s\tError en factorial de %s (entero negativo), se asigna 1.\n%s",
                         ConsoleColor.red, number, ConsoleColor.reset);
                 // Devolver 1 para que no altere el resto de cálculos.
                 return 1;
@@ -789,6 +790,10 @@ public final class Evaluar {
         else {
             System.out.println();
             System.out.println("Pruebas operaciones (Java y Evaluar):");
+            expression = "25+((2-5)!)2";
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
             expression = "25+(5!*2)";
             System.out.printf("Evaluar dice: %s = ", expression);
             resD = Evaluar.evaluar(expression);
