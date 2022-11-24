@@ -16,12 +16,13 @@ import java.util.Arrays;
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
  * @author Guillermo Som (Guille), iniciado el 16/nov/2022
- * @version 1.1.4.2.221123
+ * @version 1.1.5.1.221124
  */
 public final class Evaluar {
     /*
      Versión 1.1.5.*.221123
         No se calculan las factoriales de números enteros negativos.
+        Solo se usa la función gamma si el número no es entero positivo.
 
      Versión 1.1.4.*.221122
         Evaluar la factorial usando NUM!.
@@ -650,30 +651,46 @@ public final class Evaluar {
 
     /**
      * Calcula la factorial del número indicado.<br>
-     * Se permiten decimales y números negativos (que no sean números enteros).<br>
-     * Si el número indicado es 142 o superior devuelve Infinity.<br><br>
+     * Se permiten decimales y números negativos (que no sean números enteros).<br><br>
+     *
      * <b>NOTAS:</b<br>
      * Las comprobaciones de los valores obtenidos con los números no naturales (enteros mayores de cero) las he hecho con la calculadora (en modo científico) de Windows.<br>
      * Esta calculadora no admite el cálculo de factoriales de números negativos enteros, pero sí de factoriales de números negativos con decimales.<br>
-     * Aun así, el programa calcula todos los números que se le indiquen.<br>
+     * Esta función no calcula los enteros negativos.<br>
      * Aclaración: Puede que no todos los valores devueltos sean correctos.
      *
-     * @param n El número del que se quiere calcular la factorial.
+     * @param number El número del que se quiere calcular la factorial.
      * @return Un valor de tipo doble con la factorial del número indicado.
      * @since 1.1.4.0
      */
-    public static double fact(double n) {
-        // Comprobar si n es un entero negativo sin decimales.
-        if (n < 0) {
-            double number = Math.abs(n);
-            double fPart = number - (long) number;
+    public static double fact(double number) {
+        if (number == 0) return 1;
+        if (number == 2) return 2;
+
+        // Comprobar si el número es un entero negativo sin decimales.
+        if (number < 0) {
+            double numAbs = Math.abs(number);
+            double fPart = numAbs - (long) numAbs;
             if (fPart == 0) {
                 System.out.printf("%s\tError en factorial de %s (entero negativo).\n%s",
-                        ConsoleColor.red, n, ConsoleColor.reset);
-                return 0;
+                        ConsoleColor.red, number, ConsoleColor.reset);
+                // Devolver 1 para que no altere el resto de cálculos.
+                return 1;
             }
         }
-        return gamma(n + 1);
+
+        // Si no es un número natural (o menor de cero) usar la función gamma.
+        if (number % 1 != 0 || number < 0)
+        {
+            return gamma(number + 1);
+        }
+
+        // Calcularlo multiplicando el número hasta el 2.
+        for (double i = number - 1; i > 1; --i)
+        {
+            number *= i;
+        }
+        return number;
     }
 
     /**
@@ -755,7 +772,7 @@ public final class Evaluar {
             System.out.println();
         }
 
-        expression = "25+((2+3)!*2)";
+        expression = "25+(2-5)!*2";
         System.out.printf("Escribe una expresión a evaluar (0 para mostrar las pruebas) [%s] ", expression);
         res = in.readLine();
         if (!res.equals("0")) {
@@ -776,7 +793,10 @@ public final class Evaluar {
             System.out.printf("Evaluar dice: %s = ", expression);
             resD = Evaluar.evaluar(expression);
             System.out.println(resD);
-
+            expression = "25+((2+3)!*2)";
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
             expression = "25+(2*(7*2)+2)";
             pruebaD = 25+(2*(7*2)+2);
             System.out.printf("Java dice: %s = %s\n", expression, pruebaD);
