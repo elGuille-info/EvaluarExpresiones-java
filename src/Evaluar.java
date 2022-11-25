@@ -733,11 +733,28 @@ public final class Evaluar {
         double pruebaD;
         double resD;
 
-        System.out.printf("Indica las letras a comprobar (0 para no comprobar cadenas) [%s]: ", vocales);
         // Con BufferedReader se puede pulsar INTRO,
         //  siempre que el out anterior no acabe en nueva línea??? (o eso me ha parecido).
         in = new BufferedReader(
                 new InputStreamReader(System.in));
+
+        // Comprobar si se ha indicado una expresión en la línea de comandos.
+        if (args.length > 0) {
+            expression = args[0];
+            System.out.printf("Evaluar dice: %s = ", expression);
+            resD = Evaluar.evaluar(expression);
+            System.out.println(resD);
+            System.out.println();
+
+            System.out.print("Pulsa una tecla (0 para terminar).");
+            res = in.readLine();
+            if (!res.equals("0")) {
+                return;
+            }
+            System.out.println();
+        }
+
+        System.out.printf("Indica las letras a comprobar (0 para no comprobar cadenas) [%s]: ", vocales);
         res = in.readLine();
 
         if (!res.equals("0")) {
