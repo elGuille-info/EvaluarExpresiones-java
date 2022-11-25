@@ -791,7 +791,7 @@ public final class Evaluar {
             System.out.println();
         }
 
-        expression = "25+(2-5)!*2";
+        expression = "25+(3+2)!*2";
         System.out.printf("Escribe una expresión a evaluar (0 para mostrar las pruebas) [%s] ", expression);
         res = in.readLine();
         if (!res.equals("0")) {
