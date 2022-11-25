@@ -22,10 +22,25 @@ public class Main {
           */
         boolean mostrarEjemplos;
         String expression;
-
+        String res;
+        // Solo se mostrará en la expresión indicada (no las de ejemplo).
         Evaluar.mostrarParciales = true;
 
-        String res;
+        // Con BufferedReader se puede pulsar INTRO,
+        //  siempre que el out anterior no acabe en nueva línea??? (o eso me ha parecido).
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(System.in));
+
+        // Comprobar si se ha indicado una expresión en la línea de comandos.
+        if (args.length > 0) {
+            expression = args[0];
+            mostrarResultado(expression);
+            System.out.println();
+
+            System.out.print("Pulsa una tecla.");
+            in.readLine();
+            System.out.println();
+        }
 
         while (true) {
 
@@ -44,12 +59,7 @@ public class Main {
             System.out.print(ConsoleColor.reset);
             System.out.print("Indica las opciones a usar, 0=salir (ej: 146) [145]: ");
 
-            // Con BufferedReader se puede pulsar INTRO,
-            //  siempre que el out anterior no acabe en nueva línea??? (o eso me ha parecido).
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(System.in));
             res = in.readLine();
-            //System.out.println();
 
             if (res.equals("")) {
                 res = "145";
@@ -59,9 +69,6 @@ public class Main {
                 System.out.println("Se termina el programa.");
                 return;
             }
-
-            // Solo se mostrará en la expresión indicada (no las de ejemplo).
-            Evaluar.mostrarParciales = true;
 
             mostrarTiempoEmpleado = res.contains("1");
             mostrarEjemplos = res.contains("3");
@@ -148,8 +155,6 @@ public class Main {
 
                 Evaluar.mostrarParciales = mostrarParcialesAnt;
             }
-
-            //System.err.flush();
             System.out.println();
         }
     }
