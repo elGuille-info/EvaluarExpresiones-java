@@ -688,7 +688,7 @@ public final class Evaluar {
 
         // Calcularlo multiplicando el número hasta el 2.
         // for (double i = number - 1; i > 1; --i)
-        for (double i = number - 1; i > 1; i++)
+        for (double i = number - 1; i > 1; i--)
         {
             number *= i;
         }
