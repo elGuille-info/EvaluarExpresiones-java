@@ -22,6 +22,31 @@ Estoy usando el IDE [IntelliJ IDEA 2022.2.3 (Community Edition) de JetBrains](ht
 
 <br>
 
+## EvaluarExpresiones v1.1.5.3 del 26-nov-2022
+
+Si se indica mostrar los cálculos conforme se hacen (_mostrarParciales_), ahora muestra también las factoriales.
+
+Por ejemplo:
+
+```
+double resD = Evaluar.evalua("25+(3+2)!*2");
+```
+
+Mostraría esta salida:
+```
+	 3+2 = 5,00
+	 5.0! = 120.0
+	 120.0*2 = 240,00
+	 25+240.0 = 265,00
+```
+
+<br>
+
+> **Nota:**
+> El orden de evaluación siempre evalúa los paréntesis, si hay paréntesis se evalúa el contenido entre paréntesis, analizando primero las factoriales y después los restantes signos aritméticos usando el orden de precedencia: primero los multiplicativos y después los aditivos.
+
+<br>
+
 ## EvaluarExpresiones v1.1.5.* del 24-nov-2022
 
 Evalúa factoriales, tanto de números enteros positivos (naturales) como números con parte decimal (positivos o negativos).<br>
