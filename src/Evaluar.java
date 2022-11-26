@@ -16,13 +16,14 @@ import java.util.Arrays;
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
  * @author Guillermo Som (Guille), iniciado el 16/nov/2022
- * @version 1.1.5.2.221124
+ * @version 1.1.5.3.221126
  */
 public final class Evaluar {
     /*
      Versión 1.1.5.*.221123
         No se calculan las factoriales de números enteros negativos.
         Solo se usa la función gamma si el número no es entero positivo.
+        Mostrar lo que se evalúa con la factorial.
 
      Versión 1.1.4.*.221122
         Evaluar la factorial usando NUM!.
@@ -336,6 +337,11 @@ public final class Evaluar {
             res1 = Double.parseDouble(op2);
             res2 = fact(res1);
             expression = expression.replace(op2 + "!", Double.toString(res2));
+            // Si se deben mostrar las operaciones parciales. (18/nov/22 15.08)
+            if (mostrarParciales) {
+                // Mostrar los valores parciales en otro color.
+                System.out.printf("%s\t %s! = %s\n%s", ConsoleColor.cyan, op2, res2, ConsoleColor.reset);
+            }
         }
 
         // Para asegurarme que no use op1 antes de este bucle while.
