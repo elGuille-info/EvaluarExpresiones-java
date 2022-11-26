@@ -752,9 +752,9 @@ public final class Evaluar {
             System.out.println(resD);
             System.out.println();
 
-            System.out.print("Pulsa una tecla (0 para terminar).");
+            System.out.print("Pulsa una tecla (0 para terminar). ");
             res = in.readLine();
-            if (!res.equals("0")) {
+            if (res.equals("0")) {
                 return;
             }
             System.out.println();
