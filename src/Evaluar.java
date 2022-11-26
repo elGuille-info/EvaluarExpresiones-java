@@ -747,7 +747,8 @@ public final class Evaluar {
         // Comprobar si se ha indicado una expresión en la línea de comandos.
         if (args.length > 0) {
             expression = args[0];
-            System.out.printf("Evaluar dice: %s = ", expression);
+            System.out.printf("Evaluar la expresión %s. Los pasos al evaluar son:\n", expression);
+            mostrarParciales = true;
             resD = Evaluar.evaluar(expression);
             System.out.println(resD);
             System.out.println();
