@@ -16,7 +16,7 @@ import java.util.Arrays;
  * Clase para evaluar expresiones simples utilizando valores dobles.
  *
  * @author Guillermo Som (Guille), iniciado el 16/nov/2022
- * @version 1.1.5.3.221126
+ * @version 1.1.5.4.221126
  */
 public final class Evaluar {
     /*
