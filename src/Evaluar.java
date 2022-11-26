@@ -337,7 +337,7 @@ public final class Evaluar {
             res1 = Double.parseDouble(op2);
             res2 = fact(res1);
             expression = expression.replace(op2 + "!", Double.toString(res2));
-            // Si se deben mostrar las operaciones parciales. (18/nov/22 15.08)
+            // Si se deben mostrar las operaciones parciales. (26/nov/22)
             if (mostrarParciales) {
                 // Mostrar los valores parciales en otro color.
                 System.out.printf("%s\t %s! = %s\n%s", ConsoleColor.cyan, op2, res2, ConsoleColor.reset);
