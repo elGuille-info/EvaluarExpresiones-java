@@ -22,6 +22,12 @@ Estoy usando el IDE [IntelliJ IDEA 2022.2.3 (Community Edition) de JetBrains](ht
 
 <br>
 
+## Si quieres compilar el código de Java en la línea de comandos.
+
+Mira esto que tengo publicado en mi blog: [Compilar código Java desde la línea de comandos](https://www.elguillemola.com/compilar-codigo-java-desde-la-linea-de-comandos/)
+
+<br>
+
 ## EvaluarExpresiones v1.1.5.3 del 26-nov-2022
 
 Si se indica mostrar los cálculos conforme se hacen (_mostrarParciales_), ahora muestra también las factoriales.
